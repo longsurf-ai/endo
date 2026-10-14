@@ -1,0 +1,211 @@
+/* Purpose: Gray light/dark surfaces with Neutral primary colors and existing data tokens. */
+@layer base {
+  :root,
+  .light {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --workflow-control: oklch(0.55 0.035 300);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --sidebar: #f1f1f1;
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+    --scrollbar-thumb: oklch(0.708 0 0 / 30%);
+    --scrollbar-thumb-hover: oklch(0.708 0 0 / 50%);
+    --up: hsl(160 48% 33%);
+    --down: hsl(0 60% 44%);
+    --chart-comparison-up: hsl(160 48% 24%);
+    --chart-comparison-down: hsl(0 60% 32%);
+    --unchanged: hsl(220 8% 42%);
+    --indicator-blue: hsl(221 83% 53%);
+    --indicator-orange: hsl(29 90% 48%);
+    --indicator-teal: hsl(166 74% 32%);
+    --indicator-cyan: hsl(193 82% 38%);
+    --indicator-purple: hsl(262 72% 52%);
+    --indicator-magenta: hsl(356 70% 48%);
+    --indicator-amber: hsl(42 92% 42%);
+    --indicator-green: hsl(142 64% 36%);
+    --indicator-muted: hsl(220 8% 44%);
+    --ai-gradient-start: hsl(240 70% 62%);
+    --ai-gradient-end: hsl(17 85% 58%);
+    --chart-grid: hsl(216 14% 86%);
+    --chart-session-pre: rgb(255 167 38 / 0.09);
+    --chart-session-post: rgb(41 98 255 / 0.075);
+    --chart-text: hsl(220 8% 42%);
+    --chart-panel: hsl(216 18% 95%);
+    --chart-split-line: color-mix(in oklab, var(--border) 58%, transparent);
+    --chart-annotation-border: hsl(34 90% 42%);
+    --chart-annotation-fill: hsl(224 34% 14%);
+    --chart-annotation-text: hsl(220 24% 98%);
+    --chart-agent-annotation-fill: hsl(216 24% 98%);
+    --chart-agent-annotation-text: hsl(222 18% 14%);
+    --chart-agent-annotation-positive: hsl(142 64% 36%);
+    --chart-agent-annotation-negative: hsl(0 60% 44%);
+    --chart-agent-annotation-neutral: hsl(220 8% 42%);
+  }
+
+  .dark {
+    --background: oklch(0.18 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --workflow-control: oklch(0.68 0.04 300);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: #171717;
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+    --scrollbar-thumb: oklch(0.985 0 0 / 20%);
+    --scrollbar-thumb-hover: oklch(0.985 0 0 / 35%);
+    --up: hsl(160 48% 44%);
+    --down: hsl(0 60% 60%);
+    --chart-comparison-up: hsl(160 48% 32%);
+    --chart-comparison-down: hsl(0 60% 44%);
+    --unchanged: hsl(220 5% 55%);
+    --indicator-blue: hsl(218 78% 66%);
+    --indicator-orange: hsl(31 88% 61%);
+    --indicator-teal: hsl(166 48% 52%);
+    --indicator-cyan: hsl(191 75% 58%);
+    --indicator-purple: hsl(264 72% 70%);
+    --indicator-magenta: hsl(356 75% 62%);
+    --indicator-amber: hsl(46 86% 62%);
+    --indicator-green: hsl(142 48% 54%);
+    --indicator-muted: hsl(220 7% 63%);
+    --ai-gradient-start: hsl(240 100% 80%);
+    --ai-gradient-end: hsl(17 100% 77%);
+    --chart-grid: hsl(225 6% 16%);
+    --chart-session-pre: rgb(255 167 38 / 0.08);
+    --chart-session-post: rgb(41 98 255 / 0.14);
+    --chart-text: hsl(220 5% 54%);
+    --chart-panel: hsl(225 8% 11%);
+    --chart-split-line: color-mix(in oklab, var(--border) 52%, transparent);
+    --chart-annotation-border: hsl(35 92% 56%);
+    --chart-annotation-fill: hsl(225 22% 12%);
+    --chart-annotation-text: hsl(40 24% 96%);
+    --chart-agent-annotation-fill: hsl(225 22% 12%);
+    --chart-agent-annotation-text: hsl(40 24% 96%);
+    --chart-agent-annotation-positive: hsl(142 48% 54%);
+    --chart-agent-annotation-negative: hsl(0 60% 60%);
+    --chart-agent-annotation-neutral: hsl(0 0% 100%);
+  }
+
+  /* Recompute aliases for nested light/dark scopes. */
+  :root,
+  .light,
+  .dark {
+    --invitation-mint: #b7e9e4;
+    --invitation-lime: #e6efc9;
+    --invitation-pink: #f4d4e9;
+    --invitation-lilac: #e7d0f2;
+    --invitation-ink: #172327;
+    --invitation-paper: #fff;
+    /* The Cloud plan card always sits on a bright sea, in either theme. */
+    --plan-ink: #082b43;
+    --plan-ink-muted: #426a83;
+    --plan-wash: #eef6fc;
+    --plan-accent: #1b5fd9;
+    /* Overnight shares the pre-market tint: both precede the open. */
+    --chart-session-overnight: var(--chart-session-pre);
+    --chart-agent-annotation-muted: color-mix(
+      in srgb,
+      var(--chart-agent-annotation-text) 62%,
+      transparent
+    );
+    --chart-agent-annotation-divider: color-mix(
+      in srgb,
+      var(--chart-agent-annotation-text) 14%,
+      transparent
+    );
+    --sidebar-background: var(--sidebar);
+    --primary-hover: color-mix(in oklab, var(--primary) 90%, transparent);
+    --destructive-hover: color-mix(
+      in oklab,
+      var(--destructive) 90%,
+      transparent
+    );
+    --destructive-foreground: #fff;
+    --surface-1: var(--card);
+    --surface-2: var(--secondary);
+    --surface-3: var(--accent);
+    --glow-accent: var(--primary);
+    --glow-positive: var(--up);
+    --glow-negative: var(--down);
+    --surface-border-muted: color-mix(in oklab, var(--border) 42%, transparent);
+    --surface-border-subtle: color-mix(
+      in oklab,
+      var(--border) 52%,
+      transparent
+    );
+    --surface-border-strong: color-mix(
+      in oklab,
+      var(--border) 72%,
+      transparent
+    );
+    --surface-border-selected: color-mix(
+      in oklab,
+      var(--ring) 54%,
+      transparent
+    );
+    --surface-row-hover: var(--accent);
+    --surface-control: var(--secondary);
+    --surface-control-hover: var(--accent);
+    --surface-control-active: var(--muted);
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 5%);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);
+    --shadow-md:
+      0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 10%);
+    --shadow-lg:
+      0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%);
+    --shadow-xl:
+      0 20px 25px -5px rgb(0 0 0 / 10%), 0 8px 10px -6px rgb(0 0 0 / 10%);
+    --shadow-widget: var(--shadow-sm);
+    --shadow-selected:
+      0 0 0 1px var(--surface-border-selected), var(--shadow-widget);
+  }
+}

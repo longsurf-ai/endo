@@ -1,0 +1,16 @@
+{
+  "name": "@openchart/identifier",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/identifier.ts"
+  },
+  "scripts": {
+    "check": "tsc -p tsconfig.json && vitest run",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "effect": "4.0.0-rc.112"
+  }
+}

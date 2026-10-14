@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.cjs",
+    "css": "src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@openchart/app/components",
+    "ui": "@openchart/app/components/ui",
+    "hooks": "@openchart/app/hooks",
+    "lib": "@openchart/app/lib",
+    "utils": "@openchart/app/utils/cn"
+  },
+  "iconLibrary": "hugeicons"
+}

@@ -1,0 +1,22 @@
+/* Purpose: Keep the Agent surface inside its host; detailed presentation comes from assistant-ui. */
+.agent-thread {
+  @apply relative flex min-h-0 min-w-0 flex-1 flex-col text-foreground;
+}
+.agent-chat-error {
+  @apply rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive [overflow-wrap:anywhere];
+}
+
+/* Lexical contenteditable layout; directive badges use the shared chip markup. */
+.aui-lexical-editor {
+  @apply relative;
+}
+.aui-lexical-input {
+  @apply max-h-52 min-h-6 overflow-y-auto whitespace-pre-wrap outline-none [overflow-wrap:anywhere];
+}
+.aui-lexical-input > p {
+  @apply m-0;
+}
+.aui-lexical-placeholder {
+  @apply pointer-events-none absolute inset-x-0 top-0 select-none text-[#8e8e8e];
+  padding: inherit;
+}

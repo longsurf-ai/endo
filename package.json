@@ -1,0 +1,79 @@
+{
+  "name": "reagent",
+  "private": true,
+  "license": "MIT",
+  "workspaces": [
+    "common/*",
+    "app",
+    "server",
+    "platform/desktop",
+    "demo/*"
+  ],
+  "overrides": {
+    "nwsapi": "2.2.24",
+    "prettier": "3.9.6",
+    "rxjs": "7.8.2",
+    "@effect/platform-node-shared": "4.0.0-rc.112",
+    "monaco-editor": "npm:@codingame/monaco-vscode-editor-api@25.1.2"
+  },
+  "scripts": {
+    "check": "npm run check:static && npm run typecheck && npm test",
+    "check:static": "npm run db:check && npm run lint && npm run format",
+    "db:check": "npm --prefix server run db:check",
+    "lint": "npm run lint:core && npm --prefix app run lint",
+    "lint:core": "for package_dir in common/*; do if [ -f \"$package_dir/tsconfig.json\" ]; then eslint --max-warnings 0 \"$package_dir/**/*.ts\" || exit; fi; done && eslint --max-warnings 0 \"server/**/*.ts\" && eslint --max-warnings 0 \"platform/**/*.{ts,tsx}\" && eslint --max-warnings 0 \"demo/**/*.{ts,tsx}\"",
+    "lint:fix": "npm run lint:fix:core && npm --prefix app run lint:fix",
+    "lint:fix:core": "for package_dir in common/*; do if [ -f \"$package_dir/tsconfig.json\" ]; then eslint --max-warnings 0 \"$package_dir/**/*.ts\" --fix || exit; fi; done && eslint --max-warnings 0 \"server/**/*.ts\" --fix && eslint --max-warnings 0 \"platform/**/*.{ts,tsx}\" --fix && eslint --max-warnings 0 \"demo/**/*.{ts,tsx}\" --fix",
+    "test": "npm run test:core && npm run test:app",
+    "test:core": "vitest run --exclude 'app/**'",
+    "test:app": "npm --prefix app test",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "fix": "npm run lint:fix && npm run format:fix"
+  },
+  "devDependencies": {
+    "rollup": "4.63.1",
+    "rollup-plugin-dts": "6.5.1",
+    "@types/node": "^25.0.10",
+    "effect": "4.0.0-rc.112",
+    "eslint": "9.39.5",
+    "prettier": "3.9.6",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "vitest": "^3.2.4",
+    "@typescript/native": "npm:typescript@7.0.2",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-tailwindcss": "3.17.5",
+    "eslint-plugin-playwright": "^1.6.0",
+    "eslint-plugin-testing-library": "^6.2.2",
+    "eslint-plugin-jest-dom": "^5.4.0",
+    "eslint-plugin-vitest": "^0.5.4",
+    "typescript-eslint": "8.69.0",
+    "@eslint/js": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "prettier-plugin-tailwindcss": "0.8.1"
+  },
+  "_comment_patchedDependencies": {
+    "toolResultError": [
+      "Why: @ag-ui/core lacks a typed TOOL_CALL_RESULT.error field and @ag-ui/client drops it, so streamed tool failures lose their failure status.",
+      "Upstream: https://github.com/ag-ui-protocol/ag-ui/pull/2549 adds optional string error and preserves it as ToolMessage.error.",
+      "TODO(remove): After upgrading both packages to releases with this fix, delete both patches and their registrations, regenerate bun.lock, and retain the regression tests. See patches/README.md#tool-result-failures."
+    ],
+    "activity": [
+      "Why: @assistant-ui/react-ag-ui drops non-A2UI Activity messages; this patch preserves their type, content, ID and metadata as data parts.",
+      "Upstream: https://github.com/assistant-ui/assistant-ui/issues/5348 and PR #5352 restore A2UI only; generic Activity-to-data conversion remains a local proposal.",
+      "TODO(remove): After upgrading to equivalent ordinary Activity preservation, delete this patch and its registration, regenerate bun.lock, and retain the regression tests. See patches/README.md#ordinary-activity-conversion."
+    ]
+  },
+  "patchedDependencies": {
+    "@ag-ui/core@0.0.59": "patches/@ag-ui%2Fcore@0.0.59.patch",
+    "@ag-ui/client@0.0.59": "patches/@ag-ui%2Fclient@0.0.59.patch",
+    "@assistant-ui/react-ag-ui@0.0.58": "patches/@assistant-ui%2Freact-ag-ui@0.0.58.patch",
+    "@shadcn/react@0.3.1": "patches/@shadcn%2Freact@0.3.1.patch"
+  },
+  "packageManager": "bun@1.4.2"
+}

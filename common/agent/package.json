@@ -1,0 +1,15 @@
+{
+  "name": "@openchart/agent",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./prompt-constraint": "./prompt-constraint.ts",
+    "./directive-formatter": "./directive-formatter.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "effect": "4.0.0-rc.112"
+  }
+}

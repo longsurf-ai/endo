@@ -1,0 +1,41 @@
+{
+  "conversion": "ffmpeg -map_metadata -1 -ac 1 -ar 44100 -c:a pcm_s16le -af volume=-6dB",
+  "sounds": [
+    {
+      "id": "chime",
+      "file": "openchart-chime.wav",
+      "sha256": "828b7bf2997e9488175e64f32d3476c88c2827cfea18cc15d3d458b924c997e3",
+      "seconds": 0.5390022675736962
+    },
+    {
+      "id": "confirm",
+      "file": "openchart-confirm.wav",
+      "sha256": "7a8d213fdcf09ecc4f761ce9de20c336a6cb13e9cd21d19b94d9b8826ed3e624",
+      "seconds": 0.4904081632653061
+    },
+    {
+      "id": "question",
+      "file": "openchart-question.wav",
+      "sha256": "6ff64f49f9408e8a4ea4ad183943166cee8a076723248a50e3cc1fef359ffe42",
+      "seconds": 0.4906802721088435
+    },
+    {
+      "id": "glass",
+      "file": "openchart-glass.wav",
+      "sha256": "3140017ca3a0713b7bec57b8c20940594f7d9f26c75e6a1585c87848cd960405",
+      "seconds": 0.2755328798185941
+    },
+    {
+      "id": "bong",
+      "file": "openchart-bong.wav",
+      "sha256": "302cb6681db9e6abe16922a3c119e412f5de016ee6f82240f96ebb6effe4b7a2",
+      "seconds": 0.11993197278911565
+    },
+    {
+      "id": "pluck",
+      "file": "openchart-pluck.wav",
+      "sha256": "221396caf5712cb4e0d22cd49166e2a5d76592370d3881c3697f2b93ceb12743",
+      "seconds": 0.16165532879818595
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+diff --git a/dist/index.d.mts b/dist/index.d.mts
+index e153b60531ba3db7e9b26c5104d5cfb9f8edc7b5..51ccc840072ce7328639e2e907b54ab762885e0a 100644
+--- a/dist/index.d.mts
++++ b/dist/index.d.mts
+@@ -4761,6 +4761,7 @@ declare const ToolCallResultEventSchema: z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, "passthrough", z.ZodTypeAny, z.objectOutputType<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+@@ -4772,6 +4773,7 @@ declare const ToolCallResultEventSchema: z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, z.ZodTypeAny, "passthrough">, z.objectInputType<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+@@ -4783,6 +4785,7 @@ declare const ToolCallResultEventSchema: z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, z.ZodTypeAny, "passthrough">>;
+ declare const ToolCallChunkEventSchema: z.ZodObject<{
+@@ -11647,6 +11650,7 @@ declare const EventSchemas: z.ZodDiscriminatedUnion<"type", [z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, "passthrough", z.ZodTypeAny, z.objectOutputType<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+@@ -11658,6 +11662,7 @@ declare const EventSchemas: z.ZodDiscriminatedUnion<"type", [z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, z.ZodTypeAny, "passthrough">, z.objectInputType<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+@@ -11669,6 +11674,7 @@ declare const EventSchemas: z.ZodDiscriminatedUnion<"type", [z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, z.ZodTypeAny, "passthrough">>, z.ZodObject<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 0bb294502e9fab1a51fdc077921a1bbb0f1d7447..46af1660f9c1ffec8c87c1b971120c5b5ad090a7 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -4761,6 +4761,7 @@ declare const ToolCallResultEventSchema: z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, "passthrough", z.ZodTypeAny, z.objectOutputType<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+@@ -4772,6 +4773,7 @@ declare const ToolCallResultEventSchema: z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, z.ZodTypeAny, "passthrough">, z.objectInputType<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+@@ -4783,6 +4785,7 @@ declare const ToolCallResultEventSchema: z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, z.ZodTypeAny, "passthrough">>;
+ declare const ToolCallChunkEventSchema: z.ZodObject<{
+@@ -11647,6 +11650,7 @@ declare const EventSchemas: z.ZodDiscriminatedUnion<"type", [z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, "passthrough", z.ZodTypeAny, z.objectOutputType<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+@@ -11658,6 +11662,7 @@ declare const EventSchemas: z.ZodDiscriminatedUnion<"type", [z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, z.ZodTypeAny, "passthrough">, z.objectInputType<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+@@ -11669,6 +11674,7 @@ declare const EventSchemas: z.ZodDiscriminatedUnion<"type", [z.ZodObject<{
+   toolCallId: z.ZodString;
+   content: z.ZodString;
+   role: z.ZodOptional<z.ZodLiteral<"tool">>;
++  error: z.ZodOptional<z.ZodString>;
+   subagentRunId: z.ZodOptional<z.ZodString>;
+ }, z.ZodTypeAny, "passthrough">>, z.ZodObject<{
+   timestamp: z.ZodOptional<z.ZodNumber>;
+diff --git a/dist/index.js b/dist/index.js
+index 5794b1bf189d430038734c018bf290ac72269c2f..fe5d79f93e594514c6391b71a0cfa584e08d864d 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -565,6 +565,7 @@ const ToolCallResultEventSchema = BaseEventSchema.extend({
+ 	toolCallId: zod.z.string(),
+ 	content: zod.z.string(),
+ 	role: zod.z.literal("tool").optional(),
++	error: zod.z.string().optional(),
+ 	subagentRunId: zod.z.string().optional()
+ });
+ const ToolCallChunkEventSchema = BaseEventSchema.extend({
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 262ef91be94e5c3e7e6e8f8c0b7a0d6fc205bdbb..2a19958e82a5487d3309c208ec22257f92013483 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -565,6 +565,7 @@ const ToolCallResultEventSchema = BaseEventSchema.extend({
+ 	toolCallId: z.string(),
+ 	content: z.string(),
+ 	role: z.literal("tool").optional(),
++	error: z.string().optional(),
+ 	subagentRunId: z.string().optional()
+ });
+ const ToolCallChunkEventSchema = BaseEventSchema.extend({

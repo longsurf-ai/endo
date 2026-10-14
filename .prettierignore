@@ -1,0 +1,25 @@
+# Scratch files.
+tmp/
+
+# Generated files and build output.
+**/*.timestamp-*.mjs
+**/.artifacts/
+**/node_modules/
+**/dist/
+platform/desktop/out/
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/blob-report/
+**/playwright/.cache/
+**/e2e/.auth/
+**/bun.lock
+**/package-lock.json
+app/public/mockServiceWorker.js
+patches/*.patch
+
+# Templates are not parseable before generation.
+**/*.hbs
+
+# Migration source bytes are recorded in the database checksum ledger.
+server/db/migration/*.ts

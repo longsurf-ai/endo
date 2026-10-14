@@ -1,0 +1,1401 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "f18c6004-f132-4a2e-8cf3-7b1c5e7f3341",
+  "prevIds": ["00000000-0000-0000-0000-000000000000"],
+  "ddl": [
+    {
+      "name": "agent_permission_grants",
+      "entityType": "tables"
+    },
+    {
+      "name": "agent_messages",
+      "entityType": "tables"
+    },
+    {
+      "name": "agent_parts",
+      "entityType": "tables"
+    },
+    {
+      "name": "agent_permissions",
+      "entityType": "tables"
+    },
+    {
+      "name": "agent_run",
+      "entityType": "tables"
+    },
+    {
+      "name": "agent_session_bindings",
+      "entityType": "tables"
+    },
+    {
+      "name": "agent_sessions",
+      "entityType": "tables"
+    },
+    {
+      "name": "agent_todos",
+      "entityType": "tables"
+    },
+    {
+      "name": "agent_schedule_occurrence",
+      "entityType": "tables"
+    },
+    {
+      "name": "agent_schedule",
+      "entityType": "tables"
+    },
+    {
+      "name": "workspace",
+      "entityType": "tables"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "agent_permission_grants"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "action",
+      "entityType": "columns",
+      "table": "agent_permission_grants"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "resource",
+      "entityType": "columns",
+      "table": "agent_permission_grants"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_permission_grants"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "agent_permission_grants"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "agent_messages"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "session_id",
+      "entityType": "columns",
+      "table": "agent_messages"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "role",
+      "entityType": "columns",
+      "table": "agent_messages"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "data",
+      "entityType": "columns",
+      "table": "agent_messages"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_messages"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "agent_messages"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "agent_parts"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "message_id",
+      "entityType": "columns",
+      "table": "agent_parts"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "data",
+      "entityType": "columns",
+      "table": "agent_parts"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_parts"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "agent_parts"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "table": "agent_permissions"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "data",
+      "entityType": "columns",
+      "table": "agent_permissions"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_permissions"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "agent_permissions"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "agent_run"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "session_id",
+      "entityType": "columns",
+      "table": "agent_run"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "session_intent_id",
+      "entityType": "columns",
+      "table": "agent_run"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "input",
+      "entityType": "columns",
+      "table": "agent_run"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'queued'",
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "agent_run"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "queue_position",
+      "entityType": "columns",
+      "table": "agent_run"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_run"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "started_at",
+      "entityType": "columns",
+      "table": "agent_run"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "finished_at",
+      "entityType": "columns",
+      "table": "agent_run"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "agent_session_bindings"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "key",
+      "entityType": "columns",
+      "table": "agent_session_bindings"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_session_bindings"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "agent_session_bindings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "parent_id",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "kind",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "binding_id",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "anchors",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "title",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "compacting_at",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "archived_at",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "last_read_run_id",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "agent_sessions"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "agent_todos"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "session_id",
+      "entityType": "columns",
+      "table": "agent_todos"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "content",
+      "entityType": "columns",
+      "table": "agent_todos"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "agent_todos"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "priority",
+      "entityType": "columns",
+      "table": "agent_todos"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "position",
+      "entityType": "columns",
+      "table": "agent_todos"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_todos"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "agent_todos"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "1",
+      "generated": null,
+      "name": "revision",
+      "entityType": "columns",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "schedule_id",
+      "entityType": "columns",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "agent_run_id",
+      "entityType": "columns",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "fire_at",
+      "entityType": "columns",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "agent_schedule"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "1",
+      "generated": null,
+      "name": "revision",
+      "entityType": "columns",
+      "table": "agent_schedule"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "agent_schedule"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "agent_schedule"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "agent_schedule"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "name": "enabled",
+      "entityType": "columns",
+      "table": "agent_schedule"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "target_json",
+      "entityType": "columns",
+      "table": "agent_schedule"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "recurrence",
+      "entityType": "columns",
+      "table": "agent_schedule"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "next_fire_at",
+      "entityType": "columns",
+      "table": "agent_schedule"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "workspace"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "1",
+      "generated": null,
+      "name": "revision",
+      "entityType": "columns",
+      "table": "workspace"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "workspace"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(CAST(unixepoch('subsec') * 1000 AS INTEGER))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "workspace"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "root",
+      "entityType": "columns",
+      "table": "workspace"
+    },
+    {
+      "columns": ["session_id"],
+      "tableTo": "agent_sessions",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_agent_messages_session_id_agent_sessions_id_fk",
+      "entityType": "fks",
+      "table": "agent_messages"
+    },
+    {
+      "columns": ["message_id"],
+      "tableTo": "agent_messages",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_agent_parts_message_id_agent_messages_id_fk",
+      "entityType": "fks",
+      "table": "agent_parts"
+    },
+    {
+      "columns": ["session_id"],
+      "tableTo": "agent_sessions",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "RESTRICT",
+      "nameExplicit": false,
+      "name": "fk_agent_run_session_id_agent_sessions_id_fk",
+      "entityType": "fks",
+      "table": "agent_run"
+    },
+    {
+      "columns": ["binding_id"],
+      "tableTo": "agent_session_bindings",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "RESTRICT",
+      "nameExplicit": false,
+      "name": "fk_agent_sessions_binding_id_agent_session_bindings_id_fk",
+      "entityType": "fks",
+      "table": "agent_sessions"
+    },
+    {
+      "columns": ["last_read_run_id"],
+      "tableTo": "agent_run",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "RESTRICT",
+      "nameExplicit": false,
+      "name": "fk_agent_sessions_last_read_run_id_agent_run_id_fk",
+      "entityType": "fks",
+      "table": "agent_sessions"
+    },
+    {
+      "columns": ["session_id"],
+      "tableTo": "agent_sessions",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_agent_todos_session_id_agent_sessions_id_fk",
+      "entityType": "fks",
+      "table": "agent_todos"
+    },
+    {
+      "columns": ["schedule_id"],
+      "tableTo": "agent_schedule",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_agent_schedule_occurrence_schedule_id_agent_schedule_id_fk",
+      "entityType": "fks",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "columns": ["agent_run_id"],
+      "tableTo": "agent_run",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "RESTRICT",
+      "nameExplicit": false,
+      "name": "fk_agent_schedule_occurrence_agent_run_id_agent_run_id_fk",
+      "entityType": "fks",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "columns": ["session_id", "id"],
+      "nameExplicit": false,
+      "name": "agent_todos_pk",
+      "entityType": "pks",
+      "table": "agent_todos"
+    },
+    {
+      "columns": ["id"],
+      "nameExplicit": false,
+      "name": "agent_permission_grants_pk",
+      "table": "agent_permission_grants",
+      "entityType": "pks"
+    },
+    {
+      "columns": ["id"],
+      "nameExplicit": false,
+      "name": "agent_messages_pk",
+      "table": "agent_messages",
+      "entityType": "pks"
+    },
+    {
+      "columns": ["id"],
+      "nameExplicit": false,
+      "name": "agent_parts_pk",
+      "table": "agent_parts",
+      "entityType": "pks"
+    },
+    {
+      "columns": ["user_id"],
+      "nameExplicit": false,
+      "name": "agent_permissions_pk",
+      "table": "agent_permissions",
+      "entityType": "pks"
+    },
+    {
+      "columns": ["id"],
+      "nameExplicit": false,
+      "name": "agent_run_pk",
+      "table": "agent_run",
+      "entityType": "pks"
+    },
+    {
+      "columns": ["id"],
+      "nameExplicit": false,
+      "name": "agent_session_bindings_pk",
+      "table": "agent_session_bindings",
+      "entityType": "pks"
+    },
+    {
+      "columns": ["id"],
+      "nameExplicit": false,
+      "name": "agent_sessions_pk",
+      "table": "agent_sessions",
+      "entityType": "pks"
+    },
+    {
+      "columns": ["id"],
+      "nameExplicit": false,
+      "name": "agent_schedule_occurrence_pk",
+      "table": "agent_schedule_occurrence",
+      "entityType": "pks"
+    },
+    {
+      "columns": ["id"],
+      "nameExplicit": false,
+      "name": "agent_schedule_pk",
+      "table": "agent_schedule",
+      "entityType": "pks"
+    },
+    {
+      "columns": ["id"],
+      "nameExplicit": false,
+      "name": "workspace_pk",
+      "table": "workspace",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        {
+          "value": "action",
+          "isExpression": false
+        },
+        {
+          "value": "resource",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "uniq_agent_permission_grants_action_resource",
+      "entityType": "indexes",
+      "table": "agent_permission_grants"
+    },
+    {
+      "columns": [
+        {
+          "value": "session_id",
+          "isExpression": false
+        },
+        {
+          "value": "created_at",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "idx_agent_messages_session_created",
+      "entityType": "indexes",
+      "table": "agent_messages"
+    },
+    {
+      "columns": [
+        {
+          "value": "session_id",
+          "isExpression": false
+        },
+        {
+          "value": "id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "idx_agent_messages_session_canonical_id",
+      "entityType": "indexes",
+      "table": "agent_messages"
+    },
+    {
+      "columns": [
+        {
+          "value": "message_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "idx_agent_parts_message",
+      "entityType": "indexes",
+      "table": "agent_parts"
+    },
+    {
+      "columns": [
+        {
+          "value": "session_intent_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "agent_run_session_intent_idx",
+      "entityType": "indexes",
+      "table": "agent_run"
+    },
+    {
+      "columns": [
+        {
+          "value": "session_id",
+          "isExpression": false
+        },
+        {
+          "value": "id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "agent_run_session_id_idx",
+      "entityType": "indexes",
+      "table": "agent_run"
+    },
+    {
+      "columns": [
+        {
+          "value": "session_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": "\"agent_run\".\"status\" = 'running'",
+      "origin": "manual",
+      "name": "agent_run_session_running_idx",
+      "entityType": "indexes",
+      "table": "agent_run"
+    },
+    {
+      "columns": [
+        {
+          "value": "session_id",
+          "isExpression": false
+        },
+        {
+          "value": "queue_position",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": "\"agent_run\".\"status\" = 'queued'",
+      "origin": "manual",
+      "name": "agent_run_session_queue_idx",
+      "entityType": "indexes",
+      "table": "agent_run"
+    },
+    {
+      "columns": [
+        {
+          "value": "session_id",
+          "isExpression": false
+        },
+        {
+          "value": "queue_position",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": "\"agent_run\".\"status\" = 'queued'",
+      "origin": "manual",
+      "name": "agent_run_session_queue_position_idx",
+      "entityType": "indexes",
+      "table": "agent_run"
+    },
+    {
+      "columns": [
+        {
+          "value": "key",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "uniq_agent_session_bindings_key",
+      "entityType": "indexes",
+      "table": "agent_session_bindings"
+    },
+    {
+      "columns": [
+        {
+          "value": "updated_at",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "idx_agent_sessions_updated",
+      "entityType": "indexes",
+      "table": "agent_sessions"
+    },
+    {
+      "columns": [
+        {
+          "value": "parent_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "idx_agent_sessions_parent",
+      "entityType": "indexes",
+      "table": "agent_sessions"
+    },
+    {
+      "columns": [
+        {
+          "value": "binding_id",
+          "isExpression": false
+        },
+        {
+          "value": "created_at",
+          "isExpression": false
+        },
+        {
+          "value": "id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "idx_agent_sessions_binding",
+      "entityType": "indexes",
+      "table": "agent_sessions"
+    },
+    {
+      "columns": [
+        {
+          "value": "session_id",
+          "isExpression": false
+        },
+        {
+          "value": "position",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "uniq_agent_todos_position",
+      "entityType": "indexes",
+      "table": "agent_todos"
+    },
+    {
+      "columns": [
+        {
+          "value": "schedule_id",
+          "isExpression": false
+        },
+        {
+          "value": "fire_at",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "uq_agent_schedule_occurrences_slot",
+      "entityType": "indexes",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "columns": [
+        {
+          "value": "agent_run_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "uq_agent_schedule_occurrences_run",
+      "entityType": "indexes",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "columns": [
+        {
+          "value": "next_fire_at",
+          "isExpression": false
+        },
+        {
+          "value": "id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": "\"agent_schedule\".\"enabled\" = 1",
+      "origin": "manual",
+      "name": "idx_agent_schedules_due",
+      "entityType": "indexes",
+      "table": "agent_schedule"
+    },
+    {
+      "columns": [
+        {
+          "value": "\"updated_at\" desc",
+          "isExpression": true
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "idx_agent_schedules_updated",
+      "entityType": "indexes",
+      "table": "agent_schedule"
+    },
+    {
+      "columns": ["root"],
+      "nameExplicit": false,
+      "name": "workspace_root_unique",
+      "entityType": "uniques",
+      "table": "workspace"
+    },
+    {
+      "value": "\"role\" IN ('user', 'assistant')",
+      "name": "chk_agent_messages_role",
+      "entityType": "checks",
+      "table": "agent_messages"
+    },
+    {
+      "value": "\n      json_valid(\"data\") AND json_type(\"data\") = 'object'\n      AND json_type(\"data\", '$.id') IS NULL\n      AND json_type(\"data\", '$.sessionID') IS NULL\n      AND json_type(\"data\", '$.role') IS NULL\n    ",
+      "name": "chk_agent_messages_data_columns",
+      "entityType": "checks",
+      "table": "agent_messages"
+    },
+    {
+      "value": "\n      json_valid(\"data\") AND json_type(\"data\") = 'object'\n      AND json_type(\"data\", '$.id') IS NULL\n      AND json_type(\"data\", '$.messageID') IS NULL\n      AND json_type(\"data\", '$.sessionID') IS NULL\n    ",
+      "name": "chk_agent_parts_data_columns",
+      "entityType": "checks",
+      "table": "agent_parts"
+    },
+    {
+      "value": "\"status\" IN ('queued', 'running', 'completed', 'stop', 'failed')",
+      "name": "agent_run_status_check",
+      "entityType": "checks",
+      "table": "agent_run"
+    },
+    {
+      "value": "(\n        \"status\" = 'queued'\n        AND \"queue_position\" IS NOT NULL\n        AND \"started_at\" IS NULL\n        AND \"finished_at\" IS NULL\n      ) OR (\n        \"status\" = 'running'\n        AND \"queue_position\" IS NULL\n        AND \"started_at\" IS NOT NULL\n        AND \"finished_at\" IS NULL\n      ) OR (\n        \"status\" IN ('completed', 'stop', 'failed')\n        AND \"queue_position\" IS NULL\n        AND \"started_at\" IS NOT NULL\n        AND \"finished_at\" IS NOT NULL\n      )",
+      "name": "agent_run_lifecycle_check",
+      "entityType": "checks",
+      "table": "agent_run"
+    },
+    {
+      "value": "json_valid(\"input\")\n        AND json_type(\"input\") = 'object'\n        AND NULLIF(json_extract(\"input\", '$.agent'), '') IS NOT NULL\n        AND NULLIF(\n          json_extract(\"input\", '$.model.providerID'),\n          ''\n        ) IS NOT NULL\n        AND NULLIF(\n          json_extract(\"input\", '$.model.modelID'),\n          ''\n        ) IS NOT NULL\n        AND json_type(\"input\", '$.parts') = 'array'\n        AND json_array_length(\"input\", '$.parts') > 0",
+      "name": "agent_run_input_check",
+      "entityType": "checks",
+      "table": "agent_run"
+    },
+    {
+      "value": "trim(\"key\") <> ''",
+      "name": "chk_agent_session_bindings_key",
+      "entityType": "checks",
+      "table": "agent_session_bindings"
+    },
+    {
+      "value": "\"kind\" in ('chat', 'delegate', 'dig_in', 'scheduled')",
+      "name": "agent_sessions_kind_check",
+      "entityType": "checks",
+      "table": "agent_sessions"
+    },
+    {
+      "value": "\"id\" IS NOT NULL",
+      "name": "agent_schedule_occurrence_id_check",
+      "entityType": "checks",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "value": "\"revision\" >= 1",
+      "name": "agent_schedule_occurrence_revision_check",
+      "entityType": "checks",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "value": "\"created_at\" >= 0",
+      "name": "agent_schedule_occurrence_created_at_check",
+      "entityType": "checks",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "value": "\"updated_at\" >= 0",
+      "name": "agent_schedule_occurrence_updated_at_check",
+      "entityType": "checks",
+      "table": "agent_schedule_occurrence"
+    },
+    {
+      "value": "\"id\" IS NOT NULL",
+      "name": "agent_schedule_id_check",
+      "entityType": "checks",
+      "table": "agent_schedule"
+    },
+    {
+      "value": "\"revision\" >= 1",
+      "name": "agent_schedule_revision_check",
+      "entityType": "checks",
+      "table": "agent_schedule"
+    },
+    {
+      "value": "\"created_at\" >= 0",
+      "name": "agent_schedule_created_at_check",
+      "entityType": "checks",
+      "table": "agent_schedule"
+    },
+    {
+      "value": "\"updated_at\" >= 0",
+      "name": "agent_schedule_updated_at_check",
+      "entityType": "checks",
+      "table": "agent_schedule"
+    },
+    {
+      "value": "length(trim(\"name\")) BETWEEN 1 AND 160",
+      "name": "chk_agent_schedules_name",
+      "entityType": "checks",
+      "table": "agent_schedule"
+    },
+    {
+      "value": "json_type(\"target_json\") = 'object'",
+      "name": "chk_agent_schedules_target_object",
+      "entityType": "checks",
+      "table": "agent_schedule"
+    },
+    {
+      "value": "CASE json_extract(\"target_json\", '$.kind')\n      WHEN 'agent_prompt' THEN COALESCE(\n        json_type(\"target_json\", '$.prompt.model') = 'object'\n        AND json_type(\"target_json\", '$.prompt.model.providerID') = 'text'\n        AND length(json_extract(\"target_json\", '$.prompt.model.providerID')) > 0\n        AND json_extract(\"target_json\", '$.prompt.model.providerID') <> 'unknown'\n        AND json_type(\"target_json\", '$.prompt.model.modelID') = 'text'\n        AND length(json_extract(\"target_json\", '$.prompt.model.modelID')) > 0\n        AND json_extract(\"target_json\", '$.prompt.model.modelID') <> 'unknown'\n        AND (\n          json_type(\"target_json\", '$.prompt.model.selectedVariant') IS NULL\n          OR (\n            json_type(\"target_json\", '$.prompt.model.selectedVariant') = 'text'\n            AND length(json_extract(\"target_json\", '$.prompt.model.selectedVariant')) > 0\n          )\n        )\n        AND json(json_remove(\n          json_extract(\"target_json\", '$.prompt.model'),\n          '$.providerID',\n          '$.modelID',\n          '$.selectedVariant'\n        )) = '{}',\n        0\n      )\n      ELSE 0\n      END",
+      "name": "chk_agent_schedules_target",
+      "entityType": "checks",
+      "table": "agent_schedule"
+    },
+    {
+      "value": "COALESCE(\n        (\n          json_extract(\"recurrence\", '$.kind') = 'cron'\n          AND length(\n              trim(json_extract(\"recurrence\", '$.expression'))\n            ) > 0\n          AND length(\n              trim(json_extract(\"recurrence\", '$.timeZone'))\n            ) > 0\n        ) OR (\n          json_extract(\"recurrence\", '$.kind') = 'once'\n          AND json_type(\"recurrence\", '$.fireAt') = 'text'\n          AND length(\n              trim(json_extract(\"recurrence\", '$.fireAt'))\n            ) > 0\n        ),\n        0\n      )",
+      "name": "chk_agent_schedules_recurrence_shape",
+      "entityType": "checks",
+      "table": "agent_schedule"
+    },
+    {
+      "value": "\"id\" IS NOT NULL",
+      "name": "workspace_id_check",
+      "entityType": "checks",
+      "table": "workspace"
+    },
+    {
+      "value": "\"revision\" >= 1",
+      "name": "workspace_revision_check",
+      "entityType": "checks",
+      "table": "workspace"
+    },
+    {
+      "value": "\"created_at\" >= 0",
+      "name": "workspace_created_at_check",
+      "entityType": "checks",
+      "table": "workspace"
+    },
+    {
+      "value": "\"updated_at\" >= 0",
+      "name": "workspace_updated_at_check",
+      "entityType": "checks",
+      "table": "workspace"
+    },
+    {
+      "value": "length(\"root\") > 0",
+      "name": "workspace_root_check",
+      "entityType": "checks",
+      "table": "workspace"
+    }
+  ],
+  "renames": []
+}

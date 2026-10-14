@@ -1,0 +1,50 @@
+/* Purpose: Desktop header hooks, repeated notices, and sidebar effects. */
+.jan-workspace {
+  @apply h-dvh min-h-0 overflow-hidden;
+}
+
+.jan-chat-header {
+  @apply flex h-[60px] shrink-0 items-center gap-2;
+}
+
+.page-header-centered {
+  @apply grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1;
+}
+
+@container page-header (max-width: theme("screens.sm")) {
+  .page-header-centered [data-slot="page-header-action-label"] {
+    @apply hidden;
+  }
+}
+
+.jan-chat-notice {
+  @apply mx-3 mb-2 rounded-md bg-secondary px-3 py-2 text-sm text-foreground;
+}
+
+.jan-sidebar-scroll {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 2%,
+    black 95%,
+    transparent
+  );
+}
+
+.jan-new-chat:hover > svg,
+.jan-new-chat:focus-visible > svg {
+  animation: jan-message-icon 0.5s ease-in-out;
+}
+
+@keyframes jan-message-icon {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  30% {
+    transform: rotate(-7deg) scale(1.05);
+  }
+  65% {
+    transform: rotate(7deg) scale(1.05);
+  }
+}

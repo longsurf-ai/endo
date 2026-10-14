@@ -1,0 +1,11 @@
+{
+  "name": "@openchart/notification",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/sounds.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

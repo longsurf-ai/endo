@@ -1,0 +1,166 @@
+/* Purpose: Single V2 global style entry; shared tokens and element defaults only. */
+@import "./fonts.css";
+@import "./themes.css";
+@import "./neutral-controls.css";
+@import "sonner/dist/styles.css";
+
+/* Accent tint for neutral Sonner toasts. */
+.toaster {
+  --normal-bg: color-mix(in oklch, var(--popover) 92%, var(--primary));
+  --normal-text: var(--popover-foreground);
+  --normal-border: color-mix(in oklch, var(--border) 55%, var(--primary));
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: "Inter", sans-serif;
+    --font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --font-studio: var(--font-sans);
+    --font-reading: var(--font-sans);
+    --font-size-base: 16px;
+
+    --text-2xs: calc(var(--font-size-base) * 0.6875);
+    --text-xs: calc(var(--font-size-base) * 0.75);
+    --text-sm: calc(var(--font-size-base) * 0.875);
+    --text-base: var(--font-size-base);
+    --text-lg: calc(var(--font-size-base) * 1.125);
+    --text-xl: calc(var(--font-size-base) * 1.25);
+    --text-2xl: calc(var(--font-size-base) * 1.5);
+    --text-3xl: calc(var(--font-size-base) * 1.875);
+    --leading-2xs: 1.454545;
+    --leading-xs: 1.333333;
+    --leading-sm: 1.428571;
+    --leading-base: 1.5;
+    --leading-lg: 1.555556;
+    --leading-xl: 1.4;
+    --leading-2xl: 1.333333;
+    --leading-3xl: 1.2;
+    --tracking-tighter: -0.05em;
+    --tracking-tight: -0.025em;
+    --tracking-normal: 0em;
+    --tracking-wide: 0.025em;
+    --tracking-wider: 0.05em;
+    --tracking-meta: 0.06em;
+    --tracking-caps: 0.16em;
+    --tracking-caps-wide: 0.18em;
+    --leading-none: 1;
+    --leading-tight: 1.25;
+    --leading-snug: 1.375;
+    --leading-normal: 1.5;
+
+    --radius: 0.625rem;
+    --radius-xs: 2px;
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-scrollbar: 4px;
+
+    --control-h: 36px;
+    --control-h-sm: 32px;
+    --control-h-xs: 24px;
+    --control-h-lg: 40px;
+    --control-px: 16px;
+    --control-gap: 8px;
+
+    --icon-size-xs: 12px;
+    --icon-size-sm: 14px;
+    --icon-size-md: 16px;
+    --icon-size-lg: 18px;
+    --icon-size-xl: 20px;
+    --icon-stroke-thin: 1.25;
+    --icon-stroke-regular: 2;
+    --icon-stroke-bold: 2.5;
+
+    --duration-fast: 100ms;
+    --duration-normal: 150ms;
+    --duration-slow: 200ms;
+    --ease-default: ease;
+    --ease-panel: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-snappy: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+    caret-color: var(--foreground);
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
+  body {
+    @apply overflow-hidden bg-background font-sans text-sm text-foreground antialiased;
+    margin: 0;
+    min-width: 320px;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    @apply font-mono;
+  }
+
+  input,
+  textarea {
+    caret-color: var(--foreground);
+    -webkit-text-fill-color: currentColor;
+  }
+
+  ::-ms-reveal {
+    display: none;
+  }
+
+  :where(svg.lucide) {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: var(--radius-scrollbar);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* The heading hook uses the same family as body text. */
+  .cn-font-heading {
+    font-family: var(--font-sans);
+  }
+
+  .scrollbar-subtle {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+}

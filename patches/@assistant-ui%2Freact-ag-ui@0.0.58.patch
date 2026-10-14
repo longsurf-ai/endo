@@ -1,0 +1,55 @@
+diff --git a/node_modules/@assistant-ui/react-ag-ui/.bun-tag-8ea40823d654fe99 b/.bun-tag-8ea40823d654fe99
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/dist/runtime/adapter/conversions.js b/dist/runtime/adapter/conversions.js
+index 273b1a02506a6fe9f2626b890545153d60a429e1..7241d32c3a774746ef155910ea960964cf394990 100644
+--- a/dist/runtime/adapter/conversions.js
++++ b/dist/runtime/adapter/conversions.js
+@@ -503,7 +503,18 @@ function fromAgUiMessages(messages, options) {
+ 			continue;
+ 		}
+ 		if (role === "activity") {
+-			if (getString(rawMessage, "activityType") !== "a2ui-surface") continue;
++			const activityType = getString(rawMessage, "activityType");
++      if (activityType !== "a2ui-surface") {
++        if (activityType && isObject(rawMessage.content)) {
++          converted.push({
++            id: getString(rawMessage, "id"),
++            role: "assistant",
++            content: [{ type: "data", name: activityType, data: rawMessage.content }],
++            metadata: { custom: { ag_ui: { metadata: rawMessage.metadata } } },
++          });
++        }
++        continue;
++      }
+ 			const operations = (isObject(rawMessage.content) ? rawMessage.content : null)?.["a2ui_operations"];
+ 			if (!Array.isArray(operations)) continue;
+ 			let ownerIndex = -1;
+diff --git a/src/runtime/adapter/conversions.ts b/src/runtime/adapter/conversions.ts
+index db260495f1b9d7f7528979cfecb6c4c0d3a9ab78..7a85710b4ce0d385affb0e7bf08fa081fd3a322b 100644
+--- a/src/runtime/adapter/conversions.ts
++++ b/src/runtime/adapter/conversions.ts
+@@ -862,10 +862,20 @@ export function fromAgUiMessages(
+     }
+ 
+     if (role === "activity") {
+-      // Only a2ui-surface activity messages have an assistant-part equivalent
+-      // to rehydrate; other activity types still have no surface to repaint.
++      // Rehydrate A2UI surfaces and preserve other activities for data renderers.
+       const activityType = getString(rawMessage, "activityType");
+-      if (activityType !== A2UI_SURFACE_ACTIVITY_TYPE) continue;
++      if (activityType !== A2UI_SURFACE_ACTIVITY_TYPE) {
++        // Preserve native application activities as data parts for custom renderers.
++        if (activityType && isObject(rawMessage.content)) {
++          converted.push({
++            id: getString(rawMessage, "id"),
++            role: "assistant",
++            content: [{ type: "data", name: activityType, data: rawMessage.content }],
++            metadata: { custom: { ag_ui: { metadata: rawMessage.metadata } } },
++          });
++        }
++        continue;
++      }
+       const activityContent = isObject(rawMessage.content)
+         ? (rawMessage.content as Record<string, unknown>)
+         : null;

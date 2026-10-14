@@ -1,0 +1,100 @@
+/* Monaco's hover is third-party HTML, rendered under the overflow-widget layer
+   (`code-editor-overflow`, see code-editor.tsx). It takes the shared popover
+   surface (PopoverContent: rounded-md, border, bg-popover, shadow-md) and the
+   app's type; every value is a token. */
+.monaco-editor.code-editor-overflow .monaco-resizable-hover {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--popover);
+  box-shadow: var(--shadow-md);
+}
+
+.monaco-editor.code-editor-overflow .monaco-hover {
+  border: 0;
+  border-radius: var(--radius-md);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+/* A hover outside the resizable frame, such as a diagnostic, keeps the edge. */
+.monaco-editor.code-editor-overflow .overflowingOverlayWidgets .monaco-hover {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+.monaco-editor.code-editor-overflow .monaco-hover .hover-contents {
+  padding: 8px 12px;
+}
+
+.monaco-editor.code-editor-overflow .monaco-hover hr {
+  margin: 8px -12px;
+  border-color: var(--border);
+}
+
+.monaco-editor.code-editor-overflow .monaco-hover p,
+.monaco-editor.code-editor-overflow .monaco-hover ul {
+  margin: 6px 0;
+}
+
+.monaco-editor.code-editor-overflow .monaco-hover ul {
+  padding-left: 16px;
+}
+
+.monaco-editor.code-editor-overflow .monaco-hover strong {
+  font-weight: 500;
+}
+
+.monaco-editor.code-editor-overflow .monaco-hover code {
+  border-radius: var(--radius-xs);
+  background-color: var(--muted);
+  padding: 0 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* Signatures and examples keep the editor's own token colors. */
+.monaco-editor.code-editor-overflow .monaco-hover .code,
+.monaco-editor.code-editor-overflow .monaco-hover pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* A host's hint under the docs, such as Tea's ⌘ Click line: a muted footer
+   whose keys are chips. Only a host's own HTML hint holds a `kbd`. Monaco
+   caps a hover's height and scrolls the rest, so the footer sticks to the
+   bottom of what shows. */
+.monaco-editor.code-editor-overflow .monaco-hover .markdown-hover:has(kbd) {
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid var(--border);
+  background-color: var(--popover);
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+
+.monaco-editor.code-editor-overflow
+  .monaco-hover
+  .markdown-hover:has(kbd)
+  .hover-contents {
+  padding: 6px 12px;
+}
+
+.monaco-editor.code-editor-overflow .monaco-hover .markdown-hover:has(kbd) p {
+  margin: 0;
+}
+
+.monaco-editor.code-editor-overflow .monaco-hover kbd {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background-color: var(--muted);
+  padding: 0 4px;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 11px;
+}

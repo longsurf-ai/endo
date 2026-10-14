@@ -1,0 +1,34 @@
+{
+  "name": "@openchart/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --experimental-strip-types scripts/tooling.ts dev",
+    "build": "node --max-old-space-size=8192 --experimental-strip-types scripts/tooling.ts build",
+    "package": "node --max-old-space-size=8192 --experimental-strip-types scripts/tooling.ts package",
+    "smoke": "node --experimental-strip-types tests/smoke.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "0.3.284",
+    "@effect/platform-node": "4.0.0-rc.112",
+    "effect": "4.0.0-rc.112",
+    "@openchart/server": "workspace:*",
+    "undici": "7.29.1",
+    "zod": "^4.1.5",
+    "@openchart/models": "workspace:*",
+    "@openchart/notification": "workspace:*"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "@openchart/app": "workspace:*",
+    "@playwright/test": "^1.49.1",
+    "electron": "44.2.0",
+    "vite": "7.3.6"
+  },
+  "exports": {
+    "./package.json": "./package.json"
+  }
+}

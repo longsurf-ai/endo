@@ -1,0 +1,5 @@
+*.sh text eol=lf
+*.py text eol=lf
+
+# Applied SQLite migration bytes are covered by the persisted checksum ledger.
+server/db/migration/*.ts -text

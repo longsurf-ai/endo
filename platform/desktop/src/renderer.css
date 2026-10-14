@@ -1,0 +1,35 @@
+/* Purpose: Fit the shared app around macOS window buttons and make headers draggable. */
+
+.desktop-macos .jan-workspace .jan-chat-header,
+.desktop-macos .jan-workspace [data-sidebar="header"] > div:first-child {
+  app-region: drag;
+  user-select: none;
+}
+
+/* Keep the sidebar heading clear of the native buttons. When collapsed, the
+   main header takes its place and needs the same space. */
+.desktop-macos .jan-workspace [data-sidebar="header"] > div:first-child,
+.desktop-macos
+  .jan-workspace:has(> [data-collapsible="offcanvas"])
+  .jan-chat-header {
+  padding-left: 88px;
+}
+
+.desktop-macos [data-workspace-navigation] {
+  padding-left: 88px;
+}
+
+/* Buttons and links must still receive clicks inside a draggable header. */
+.desktop-macos
+  .jan-workspace
+  :is(.jan-chat-header, [data-sidebar="header"])
+  :is(button, a, input) {
+  app-region: no-drag;
+}
+
+/* Dialogs and floating surfaces can overlap a draggable header without being its children.
+   Exclude their full surface so Electron delivers clicks to their controls. */
+.desktop-macos
+  :is([role="dialog"], [role="alertdialog"], [data-slot="floating-viewer"]) {
+  app-region: no-drag;
+}

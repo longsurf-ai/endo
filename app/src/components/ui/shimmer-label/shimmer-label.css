@@ -1,0 +1,32 @@
+/* Active-label shimmer animation. */
+@keyframes shimmer-label {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@supports (background-clip: text) {
+  [data-slot="shimmer-label"][data-active] {
+    background-image: linear-gradient(
+      110deg,
+      currentColor 35%,
+      var(--foreground) 50%,
+      currentColor 65%
+    );
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer-label 2s linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="shimmer-label"][data-active] {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
