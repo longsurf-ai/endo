@@ -35,7 +35,7 @@ Electron main (dist/main/main.js)
   │     parentPort: init {token, home, rendererOrigin}
   │                 -> ready {port} ... notify {title, body, sound} ... shutdown -> exit 0
   ├─ BrowserWindow -> preload (dist/preload/preload.cjs) -> shared App
-  │     window.desktop.connection() -> ipc desktop.connection -> {origin, token, profileID}
+  │     window.desktop.connection() -> ipc desktop.connection -> {origin, token, profileID, initialLocalStorage?}
   │     pickDirectory / openPath / revealPath / enableNotifications
   └─ endo://app protocol handler -> bundled renderer files (release builds)
 
@@ -57,6 +57,13 @@ runs `createServer()` with that home and the loopback access guard, listens on
 the window only then. No `ready` within 30 s, or an exit before it, kills the
 child and shows the startup error. Model runtimes install in the background
 (`models.installOnStartup`) and never block readiness.
+
+Before starting the backend, desktop checks whether `openchart.sqlite3` exists.
+A new profile queues the `starter` onboarding workflow through
+`initialLocalStorage`. The renderer fills only absent browser keys before
+importing the app. The copied OpenChart modal connects Claude Code, Codex or
+Antigravity; continuing, skipping or closing completes Endo's one-step flow.
+Progress persists in `local:onboarding`. Existing profiles are not offered it.
 
 App identity: release builds are named `Endo` (home `~/.endo`),
 development builds `Endo Development` (home `~/.endo-dev`), which also

@@ -7,7 +7,11 @@ declare global {
   interface Window {
     /** Added by preload.ts to supply the connection, folder picker and notification opt-in. */
     readonly desktop: {
-      readonly connection: () => Promise<BackendConnection>;
+      readonly connection: () => Promise<
+        BackendConnection & {
+          initialLocalStorage?: Readonly<Record<string, string>>;
+        }
+      >;
       readonly pickDirectory: () => Promise<string | null>;
       readonly openPath: (path: string) => Promise<void>;
       readonly revealPath: (path: string) => Promise<void>;
@@ -25,15 +29,21 @@ if (navigator.platform.startsWith("Mac"))
   document.documentElement.classList.add("desktop-macos");
 
 // Get the connection details before rendering; the page then calls the backend directly.
-void window.desktop.connection().then(async (connection) => {
-  const { bootstrap } = await import("@openchart/app/bootstrap");
-  bootstrap(connection, {
-    pickDirectory: () => window.desktop.pickDirectory(),
-    openPath: (path) => window.desktop.openPath(path),
-    revealPath: (path) => window.desktop.revealPath(path),
-    onUpdateReady: (listener) => window.desktop.onUpdateReady(listener),
-    restartToUpdate: () => window.desktop.restartToUpdate(),
-    changelog,
-    enableNotifications: () => window.desktop.enableNotifications(),
+void window.desktop
+  .connection()
+  .then(async ({ initialLocalStorage, ...connection }) => {
+    for (const [key, value] of Object.entries(initialLocalStorage ?? {})) {
+      if (localStorage.getItem(key) === null) localStorage.setItem(key, value);
+    }
+    // App modules may read storage as they load, so they load after seeding.
+    const { bootstrap } = await import("@openchart/app/bootstrap");
+    bootstrap(connection, {
+      pickDirectory: () => window.desktop.pickDirectory(),
+      openPath: (path) => window.desktop.openPath(path),
+      revealPath: (path) => window.desktop.revealPath(path),
+      onUpdateReady: (listener) => window.desktop.onUpdateReady(listener),
+      restartToUpdate: () => window.desktop.restartToUpdate(),
+      changelog,
+      enableNotifications: () => window.desktop.enableNotifications(),
+    });
   });
-});

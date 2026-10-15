@@ -37,6 +37,7 @@ import { LeftSidebar } from "./left-sidebar";
 import type { AppRouteContext } from "./route-context";
 import "./layout.css";
 import { useSidebarSort } from "@openchart/app/stores/sidebar";
+import { OnboardingHost } from "./trellis/host";
 
 function AppLayoutContent({
   transport,
@@ -147,6 +148,7 @@ function AppLayoutContent({
               onClose={() => setRenamingSession(undefined)}
             />
           ) : null}
+          <OnboardingHost transport={transport} />
         </WorkspaceFileNavigation.Provider>
       </UnsavedChangesProvider>
     </AgentProvider>

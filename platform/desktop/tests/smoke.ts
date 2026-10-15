@@ -475,9 +475,24 @@ try {
   await writeFile(join(home, "settings.json"), JSON.stringify({}));
   let page = await launch();
 
+  const onboarding = page.getByRole("dialog", { name: "Connect your agent" });
+  await expect(onboarding).toBeVisible();
+  for (const name of ["Codex", "Claude Code", "Antigravity"])
+    await expect(
+      onboarding.getByRole("region", { name, exact: true }),
+    ).toBeVisible();
+  await onboarding
+    .getByRole("button", { name: /^(Continue|Skip for now)$/ })
+    .click();
+  await expect(onboarding).toHaveCount(0);
+  await page.reload();
+
   await expect(
     page.getByRole("textbox", { name: "Message", exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("dialog", { name: "Connect your agent" }),
+  ).toHaveCount(0);
   // Observe the app's normal discovery request; no prompt or market query is sent.
   // Ignore a late response from the page being replaced by this reload.
   const models = page
@@ -618,6 +633,9 @@ try {
   await expect(
     page.getByRole("textbox", { name: "Message", exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("dialog", { name: "Connect your agent" }),
+  ).toHaveCount(0);
   await page
     .getByRole("button", { name: settings.sessionTitle, exact: true })
     .click();

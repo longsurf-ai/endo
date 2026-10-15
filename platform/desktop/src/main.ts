@@ -23,6 +23,7 @@ import { updateElectronApp, UpdateSourceType } from "update-electron-app";
 import { origin, resolveAsset } from "./assets";
 import { startBackend, type Backend } from "./backend-process";
 import type { Notify } from "./host-protocol";
+import { prepareOnboarding } from "./onboarding/startup";
 
 /** A renderer-supplied absolute local path; URLs, UNC paths and NUL bytes are refused. */
 const LocalPath = z
@@ -266,6 +267,8 @@ function start(): void {
         );
         await mkdir(home, { recursive: true });
         if (quitting) return;
+        const initialLocalStorage = await prepareOnboarding(home);
+        if (quitting) return;
         // A fresh secret lets the backend reject requests from other local programs.
         const token = randomBytes(32).toString("base64url");
         // Start the database and application services in a separate process.
@@ -288,6 +291,7 @@ function start(): void {
           origin: `http://127.0.0.1:${port}`,
           token,
           profileID: "desktop",
+          initialLocalStorage,
         };
         function assertTrustedFrame(event: Electron.IpcMainInvokeEvent): void {
           const frame = event.senderFrame;
