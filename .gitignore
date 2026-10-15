@@ -16,7 +16,7 @@ blob-report/
 .hyperframes/
 .thumbnails/
 .waveform-cache/
-demo/media/*/renders/
+demo/media/**/renders/
 
 # Credentials and machine-local state.
 .env

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1260" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1920px; height: 1260px; overflow: hidden; background: #0E0E0E; }
+#root { position: relative; width: 1920px; height: 1260px; overflow: hidden; background: #0E0E0E; }
+#fx { position: absolute; inset: 0; transform-origin: 50% 60%; }
+.winbox { position: absolute; left: 24px; top: 24px; width: 1872px; height: 1212px;
+  border-radius: 28px; overflow: hidden; background: #111111; box-shadow: 0 0 0 2px #1E1E1E; }
+#app { position: absolute; left: 0; top: 0; width: 2560px; height: 1680px; transform-origin: 0 0; }
+#clip { position: absolute; left: 0; top: 0; width: 2560px; height: 1680px; display: block; }
+#cur { position: absolute; left: 0; top: 0; width: 44px; height: 60px; }
+#cur-i { position: absolute; left: 0; top: 0; width: 44px; height: 60px; transform-origin: 3px 3px;
+  filter: drop-shadow(0 3px 5px rgba(0,0,0,0.45)); }
+.ring { position: absolute; left: -36px; top: -36px; width: 72px; height: 72px; border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.85); opacity: 0; }
+#fade { position: absolute; inset: 0; background: #0E0E0E; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="11.6" data-width="1920" data-height="1260">
+      <div id="fx">
+        <div class="winbox">
+          <div id="app" data-layout-allow-overflow>
+            <video id="clip" src="assets/clip.mp4" muted playsinline data-start="0" data-duration="11.6" data-track-index="0"></video>
+            <i class="ring" id="ring-0"></i><i class="ring" id="ring-1"></i><i class="ring" id="ring-2"></i><i class="ring" id="ring-3"></i><i class="ring" id="ring-4"></i>
+            <div id="cur"><div id="cur-i"><svg viewBox="0 0 22 30" width="44" height="60"><path d="M1.5 1.5v21.6l5.4-5.2 3.7 8.5 3.7-1.6-3.6-8.3h7.4Z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>
+          </div>
+        </div>
+      </div>
+      <div id="fade"></div>
+    </div>
+    <script>
+const T = {"D":11.6,"camera":[{"at":0,"cx":640,"cy":420,"s":1,"d":0},{"at":1.375,"cx":760,"cy":230,"s":1.55,"d":0.7},{"at":2.644230769230769,"cx":760,"cy":330,"s":1.55,"d":0.8},{"at":4.10576923076923,"cx":760,"cy":380,"s":1.45,"d":0.45},{"at":6.292582417582417,"cx":755,"cy":470,"s":1.3,"d":0.6}],"cursor":[{"t":0,"x":900,"y":600,"jump":true},{"t":0.18833335240681967,"x":74.35,"y":141.00390625,"arrive":0.36333332538604735},{"t":1.152500073115031,"x":363.2,"y":83.99609375,"arrive":1.314166685740153},{"t":2.279615328862117,"x":900,"y":560,"arrive":2.499615328862117},{"t":3.871923153217022,"x":70.55,"y":77.00390625,"arrive":4.0480769040034374},{"t":4.10576923076923,"x":900,"y":560,"arrive":4.1257692307692295},{"t":4.10576923076923,"x":70.55,"y":77.00390625,"arrive":4.1257692307692295},{"t":4.742912059301858,"x":610.4,"y":362.796875,"arrive":4.878626468993805},{"t":4.927197802197802,"x":900,"y":560,"arrive":4.947197802197802},{"t":4.927197802197802,"x":70.55,"y":77.00390625,"arrive":4.947197802197802},{"t":4.927197802197802,"x":610.4,"y":362.796875,"arrive":4.947197802197802},{"t":6.201428594170036,"x":1117,"y":402.796875,"arrive":6.26412086885054},{"t":6.292582417582417,"x":900,"y":560,"arrive":6.312582417582417},{"t":6.292582417582417,"x":70.55,"y":77.00390625,"arrive":6.312582417582417},{"t":6.292582417582417,"x":610.4,"y":362.796875,"arrive":6.312582417582417},{"t":6.292582417582417,"x":1117,"y":402.796875,"arrive":6.312582417582417},{"t":7.103693528693528,"x":900,"y":560,"arrive":7.1236935286935275},{"t":7.103693528693528,"x":70.55,"y":77.00390625,"arrive":7.1236935286935275},{"t":7.103693528693528,"x":610.4,"y":362.796875,"arrive":7.1236935286935275},{"t":7.103693528693528,"x":1117,"y":402.796875,"arrive":7.1236935286935275},{"t":10.103693528693528,"x":900,"y":560,"arrive":10.123693528693527},{"t":10.103693528693528,"x":70.55,"y":77.00390625,"arrive":10.123693528693527},{"t":10.103693528693528,"x":610.4,"y":362.796875,"arrive":10.123693528693527},{"t":10.103693528693528,"x":1117,"y":402.796875,"arrive":10.123693528693527}],"clicks":[{"t":0.38333332538604736,"x":74.35,"y":141.00390625},{"t":1.334166685740153,"x":363.2,"y":83.99609375},{"t":4.068076904003437,"x":70.55,"y":77.00390625},{"t":4.898626468993805,"x":610.4,"y":362.796875},{"t":6.28412086885054,"x":1117,"y":402.796875}],"relaunch":[]};
+const WIN = {"x":24,"y":24,"w":1872,"h":1212};
+const K0 = 0.73125;
+// Logical view (cx, cy, zoom) → #app transform, clamped to the window.
+function view(cx, cy, s) {
+  const k = K0 * s;
+  const x = Math.min(0, Math.max(WIN.w - 2560 * k, WIN.w / 2 - cx * 2 * k));
+  const y = Math.min(0, Math.max(WIN.h - 1680 * k, WIN.h / 2 - cy * 2 * k));
+  return { x, y, scale: k };
+}
+const tl = gsap.timeline({ paused: true });
+const first = T.camera[0];
+tl.fromTo("#app", view(first.cx, first.cy, first.s), { ...view(first.cx, first.cy, first.s), duration: 0.01, immediateRender: true }, 0);
+for (const c of T.camera.slice(1)) {
+  if (c.d === 0) tl.set("#app", view(c.cx, c.cy, c.s), c.at);
+  else tl.to("#app", { ...view(c.cx, c.cy, c.s), duration: c.d, ease: "power2.inOut" }, c.at);
+}
+const p = (x, y) => ({ x: x * 2 - 3, y: y * 2 - 3 });
+const c0 = T.cursor[0];
+tl.fromTo("#cur", p(c0.x, c0.y), { ...p(c0.x, c0.y), duration: 0.01, immediateRender: true }, 0);
+for (const k of T.cursor.slice(1)) {
+  if (k.jump) tl.set("#cur", p(k.x, k.y), k.t);
+  else tl.to("#cur", { ...p(k.x, k.y), duration: k.arrive - k.t, ease: "power2.inOut" }, k.t);
+}
+T.clicks.forEach((c, i) => {
+  tl.fromTo("#ring-" + i, { x: c.x * 2, y: c.y * 2, scale: 0.3, opacity: 0.9 },
+    { x: c.x * 2, y: c.y * 2, scale: 1, opacity: 0, duration: 0.42, ease: "power2.out", immediateRender: false }, c.t);
+  tl.fromTo("#cur-i", { scale: 1 }, { scale: 0.82, duration: 0.07, ease: "power1.out", immediateRender: false }, c.t - 0.02);
+  tl.to("#cur-i", { scale: 1, duration: 0.12, ease: "power1.out" }, c.t + 0.05);
+});
+// Quitting and reopening the app around a cut between recordings.
+for (const r of T.relaunch) {
+  tl.to("#fx", { scale: 0.9, opacity: 0, duration: 0.28, ease: "power2.in" }, r - 0.3);
+  tl.fromTo("#fx", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.42, ease: "power2.out", immediateRender: false }, r + 0.12);
+}
+// Fade through the background at the loop seam.
+tl.fromTo("#fade", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power1.out" }, 0);
+tl.fromTo("#fade", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.in", immediateRender: false }, T.D - 0.3);
+window.__timelines = window.__timelines || {};
+window.__timelines["main"] = tl;
+tl.seek(0);
+    </script>
+  </body>
+</html>
