@@ -107,6 +107,7 @@ app/src/
     workspace/                Workspace page and AI file merge
     routes/settings/          Appearance, Models, Changelog
     connection/               transport, reconnect and invalidation observers
+    trellis/                  onboarding host, device-local progress and agent-connection workflow
   features/
     agent/                    chat UI and assistant-ui adapters
     schedule/                 Schedule/Occurrence queries and components
