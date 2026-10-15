@@ -18,6 +18,9 @@ platform/desktop/out/
 app/public/mockServiceWorker.js
 patches/*.patch
 
+# Demo media: generated compositions, captures and renders.
+demo/media/
+
 # Templates are not parseable before generation.
 **/*.hbs
 
