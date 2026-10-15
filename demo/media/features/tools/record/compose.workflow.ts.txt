@@ -1,0 +1,33 @@
+// Codex, Claude and Gemini draft in parallel; Claude picks
+// the strongest, then polishes it in the same session.
+import {
+  agent, defineWorkflow, Effect, parallel, phase, Schema, textPrompt,
+} from "@openchart/workflow";
+
+const codex = { providerID: "codex", modelID: "tier1" } as const;
+const claude = { providerID: "claude-code", modelID: "tier2" } as const;
+const gemini = { providerID: "antigravity", modelID: "tier1" } as const;
+type Model = typeof codex | typeof claude | typeof gemini;
+
+export default defineWorkflow({
+  description: "Accepts {question}. Three vendors draft; Claude reviews.",
+  args: Schema.Struct({ question: Schema.String }),
+  run: ({ question }, { parentPrompt }) =>
+    Effect.gen(function* () {
+      const ask = (model: Model, text: string) =>
+        agent(textPrompt(text, model, parentPrompt.agent), {
+          label: model.providerID,
+        });
+      const drafts = yield* phase("Draft", parallel([
+        ask(codex, question),
+        ask(claude, question),
+        ask(gemini, question),
+      ]));
+      const review = yield* phase("Review",
+        ask(claude, `Pick the strongest draft:\n${JSON.stringify(drafts)}`));
+      return yield* agent(
+        textPrompt("Polish it into one line.", claude, parentPrompt.agent),
+        { sessionId: review.sessionId },
+      );
+    }),
+});
