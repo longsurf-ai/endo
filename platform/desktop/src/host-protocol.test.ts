@@ -8,7 +8,7 @@ test("parses init and shutdown, rejecting unknown or incomplete messages", () =>
     type: "init",
     token: "t",
     home: "/p",
-    rendererOrigin: "reagent://app",
+    rendererOrigin: "endo://app",
   };
   expect(HostMessage.parse(init)).toEqual(init);
   expect(HostMessage.parse({ type: "shutdown" })).toEqual({ type: "shutdown" });

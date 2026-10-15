@@ -180,9 +180,9 @@ export function ForgetWorkspaceDialog({
       title="Forget workspace?"
       description={
         <>
-          Remove <span className="break-all">{root}</span> from Reagent? Files
-          on disk will be kept. Its open tabs and unsaved changes in this view
-          will be discarded.
+          Remove <span className="break-all">{root}</span> from Endo? Files on
+          disk will be kept. Its open tabs and unsaved changes in this view will
+          be discarded.
         </>
       }
       action="Forget workspace"

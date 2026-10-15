@@ -158,7 +158,7 @@ async function scenario(
 }
 
 function echoPrompt(value: string) {
-  return `Call the Reagent echo tool exactly once with {"text":"${value}"}. Use the tool, not a simulated answer. After its result, reply briefly. If permission is rejected, do not retry the tool.`;
+  return `Call the Endo echo tool exactly once with {"text":"${value}"}. Use the tool, not a simulated answer. After its result, reply briefly. If permission is rejected, do not retry the tool.`;
 }
 
 async function exercise(model: ModelSelection) {

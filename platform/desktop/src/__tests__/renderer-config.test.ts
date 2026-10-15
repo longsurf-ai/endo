@@ -11,7 +11,7 @@ test("serves the Desktop renderer over its configured loopback HTTP port", async
   const root = dirname(
     createRequire(import.meta.url).resolve("@openchart/app/package.json"),
   );
-  const cacheDir = await mkdtemp(join(tmpdir(), "reagent-vite-"));
+  const cacheDir = await mkdtemp(join(tmpdir(), "endo-vite-"));
   const shared = {
     root,
     configFile: join(root, "vite.config.ts"),

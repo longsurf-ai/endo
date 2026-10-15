@@ -22,6 +22,18 @@ export type AppHost = {
   /** Releases shipped with this build, newest first. */
   changelog: readonly ChangelogEntry[];
   /**
+   * Observes Desktop's downloaded release, including one already ready. Returns
+   * cleanup; Desktop logs observation failures and retries future update checks.
+   * @example const dispose = host.onUpdateReady(setRelease);
+   */
+  onUpdateReady: (listener: (release: string) => void) => () => void;
+  /**
+   * Requests normal quit and update installation. Editors may cancel; Desktop
+   * stops its backend before restarting. No-op without an update; IPC failures reject.
+   * @example await host.restartToUpdate();
+   */
+  restartToUpdate: () => Promise<void>;
+  /**
    * Shows a system notification confirming notifications are on. The first
    * one the app shows is what lets macOS ask the user to allow them; the
    * answer is the system's and is not reported back. Failures reject.

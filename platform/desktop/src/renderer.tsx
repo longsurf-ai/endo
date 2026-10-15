@@ -11,6 +11,10 @@ declare global {
       readonly pickDirectory: () => Promise<string | null>;
       readonly openPath: (path: string) => Promise<void>;
       readonly revealPath: (path: string) => Promise<void>;
+      readonly onUpdateReady: (
+        listener: (release: string) => void,
+      ) => () => void;
+      readonly restartToUpdate: () => Promise<void>;
       readonly enableNotifications: () => Promise<void>;
     };
   }
@@ -27,6 +31,8 @@ void window.desktop.connection().then(async (connection) => {
     pickDirectory: () => window.desktop.pickDirectory(),
     openPath: (path) => window.desktop.openPath(path),
     revealPath: (path) => window.desktop.revealPath(path),
+    onUpdateReady: (listener) => window.desktop.onUpdateReady(listener),
+    restartToUpdate: () => window.desktop.restartToUpdate(),
     changelog,
     enableNotifications: () => window.desktop.enableNotifications(),
   });

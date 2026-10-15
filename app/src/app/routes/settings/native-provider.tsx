@@ -34,7 +34,7 @@ function discoveryDescription(
 ): ReactNode {
   switch (state.status) {
     case "not_installed":
-      return "Download this provider to use it in Reagent.";
+      return "Download this provider to use it in Endo.";
     case "authentication_required":
       return "Sign in with your provider account.";
     case "ready":

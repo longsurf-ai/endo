@@ -1,6 +1,6 @@
-# Develop Reagent
+# Develop Endo
 
-This repository contains the Reagent desktop app (Electron) and its local server.
+This repository contains the Endo desktop app (Electron) and its local server.
 
 ## Run from source
 
@@ -14,7 +14,7 @@ just desktop
 
 Run commands from the repository root. `just desktop` builds the Electron host
 and backend, starts Vite for live renderer updates, and opens
-`Reagent Development` with a profile under `platform/desktop/.artifacts/dev-profile`.
+`Endo Development` with a profile under `platform/desktop/.artifacts/dev-profile`.
 On first start the app installs pinned Codex, Claude Code and Antigravity CLIs
 into that profile in the background; each uses your existing login for that CLI
 (`codex login`, `claude login`, …), or sign in from Settings → Models.
@@ -27,13 +27,15 @@ home, for Agent work without Electron.
 ```sh
 just desktop-build                 # bundles without a development server
 just desktop-package development   # ad-hoc signed development .app
-just desktop-package               # production identity (Reagent.app)
+just desktop-package               # production identity (Endo.app)
 ```
 
 Generated bundles go to `platform/desktop/dist/`; packaged applications go to
 `platform/desktop/out/` (development packages to `.artifacts/dev`). Set
-`REAGENT_SIGNING_IDENTITY` and optionally `REAGENT_NOTARY_PROFILE` to sign and
-notarize a production macOS package.
+`ENDO_SIGNING_IDENTITY` and optionally `ENDO_NOTARY_PROFILE` to sign and
+notarize a production macOS package. Signed Apple Silicon packages check for
+updates; development and ad-hoc builds do not. For downloadable installers and
+publishing, follow the [release runbook](operations/desktop-release.md).
 
 ## Repository
 

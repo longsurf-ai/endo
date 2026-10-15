@@ -14,14 +14,14 @@ just desktop
 
 `just desktop` builds `main`, `backend` and `preload`, starts Vite for the
 renderer on `127.0.0.1:43875`, packages an ad-hoc signed
-`Reagent Development.app` under `platform/desktop/.artifacts/dev`, and launches
+`Endo Development.app` under `platform/desktop/.artifacts/dev`, and launches
 it with:
 
 - `--user-data-dir=platform/desktop/.artifacts/dev-profile` (browser storage),
-- `--reagent-home=platform/desktop/.artifacts/dev-profile/home` (SQLite,
+- `--endo-home=platform/desktop/.artifacts/dev-profile/home` (SQLite,
   settings, model runtimes, workspaces),
 - `--use-mock-keychain` on macOS,
-- `REAGENT_DESKTOP_DEV_URL` pointing at Vite, so the renderer hot-reloads.
+- `ENDO_DESKTOP_DEV_URL` pointing at Vite, so the renderer hot-reloads.
 
 Main, backend and preload do not hot-reload; restart `just desktop` after
 changing them. Each checkout keeps its own development profile.
@@ -37,7 +37,7 @@ Electron main (dist/main/main.js)
   ├─ BrowserWindow -> preload (dist/preload/preload.cjs) -> shared App
   │     window.desktop.connection() -> ipc desktop.connection -> {origin, token, profileID}
   │     pickDirectory / openPath / revealPath / enableNotifications
-  └─ reagent://app protocol handler -> bundled renderer files (release builds)
+  └─ endo://app protocol handler -> bundled renderer files (release builds)
 
 renderer -> http://127.0.0.1:<port> (tRPC, SSE), every request carrying the
             run token as Authorization: Bearer
@@ -58,9 +58,9 @@ the window only then. No `ready` within 30 s, or an exit before it, kills the
 child and shows the startup error. Model runtimes install in the background
 (`models.installOnStartup`) and never block readiness.
 
-App identity: release builds are named `Reagent` (home `~/.reagent`),
-development builds `Reagent Development` (home `~/.reagent-dev`), which also
-isolates Electron userData. `--reagent-home=<path>` selects an explicit home.
+App identity: release builds are named `Endo` (home `~/.endo`),
+development builds `Endo Development` (home `~/.endo-dev`), which also
+isolates Electron userData. `--endo-home=<path>` selects an explicit home.
 
 Network defaults: `backend-entry.ts` allows 1 s per address when connecting
 (Node's default of 250 ms is shorter than one round trip to distant hosts) and
@@ -69,7 +69,7 @@ keeps idle `fetch` connections for 30 s through a global `undici` Agent.
 ## Security
 
 The backend answers only requests whose Host is its bound address, whose Origin
-is the renderer origin (`reagent://app`, or the Vite origin in development),
+is the renderer origin (`endo://app`, or the Vite origin in development),
 and which carry the run token as `Authorization: Bearer` (the fetch-based
 EventSource sends it for SSE too). The token lives only in memory, never in
 argv, storage, URLs or logs, and changes every launch. IPC handlers answer only
@@ -111,9 +111,28 @@ just desktop-build [development|production]    # runtime + renderer, no package
 just desktop-package [development|production]  # Electron Packager bundle
 ```
 
-Packaging is ad-hoc signed. Set `REAGENT_SIGNING_IDENTITY` (a Developer ID) and
-optionally `REAGENT_NOTARY_PROFILE` (a `notarytool` keychain profile) for a
-distributable macOS build. There is no auto-updater and no release pipeline.
+Packaging is ad-hoc signed. Set `ENDO_SIGNING_IDENTITY` (a Developer ID) and
+optionally `ENDO_NOTARY_PROFILE` (a `notarytool` keychain profile) for a
+distributable macOS build. `just desktop-release` requires Developer ID signing,
+notarizes/staples the app and DMG, and writes a ZIP, checksums and `RELEASES.json`.
+`just desktop-publish <version>` publishes those exact artifacts. See the
+[release runbook](../operations/desktop-release.md).
+
+Signed, notarized Apple Silicon production builds embed the Endo update feed
+(`https://downloads.longsurf.ai/endo/darwin/arm64`). Development, ad-hoc and
+unsupported-platform builds never start the updater. Electron checks at launch
+and every ten minutes, downloads an available update, and reports the release
+through guarded main IPC and AppHost. The sidebar offers a restart; newly opened
+windows recover the waiting release. Subscription disposal removes the listener
+and suppresses a pending snapshot. The restart follows normal Quit so unsaved
+editors can cancel before the backend stops. A normal quit also applies a
+previously downloaded update on the next launch. Network failures are logged and
+retried on the next scheduled check.
+
+Endo uses its own bundle ID, browser storage and profile (`~/.endo`). Existing
+Reagent profiles are not moved or deleted. To reuse one, quit Reagent first and
+launch Endo with `--endo-home=<existing-profile>`; provider login and browser
+preferences may need to be set again.
 
 ## Changelog
 

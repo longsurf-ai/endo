@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.1.1",
+    "date": "2026-10-14",
+    "items": [
+      "The app is now called Endo.",
+      "Signed Mac releases download updates in the background and offer a restart button in the sidebar."
+    ]
+  },
+  {
     "version": "0.1.0",
     "date": "2026-10-14",
     "items": [

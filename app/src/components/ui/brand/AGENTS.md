@@ -1,11 +1,12 @@
 # Brand
 
-App-owned React brand marks. OpenChartMark matches the OpenChart glyph in
-`platform/desktop/assets/logo.svg`. Third-party marks (Discord, GitHub) keep their official
-geometry.
+App-owned React brand marks. `endo.png` is Endo's canonical transparent artwork;
+`EndoMark` displays it, README references it, and `just desktop-icons` exports the
+native app icon. Third-party marks retain their official geometry.
 
 ## Invariants
 
-- Marks inherit color through `currentColor`, except a third-party mark with an
-  official color (Discord, Antigravity), which owns it in every theme like `ClaudeLogo`.
+- Endo's artwork retains its colors and transparent background in every theme.
+  Keep the tight framing so the mark remains legible at small sizes.
+  Vector marks inherit `currentColor`, except official colored third-party marks.
 - Consumers own brand text, accessible labels, sizing, and navigation behavior.

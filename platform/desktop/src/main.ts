@@ -6,6 +6,7 @@ import { isAbsolute, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import {
   app,
+  autoUpdater,
   BrowserWindow,
   dialog,
   ipcMain,
@@ -17,6 +18,7 @@ import {
 } from "electron";
 import { notificationSounds } from "@openchart/notification";
 import { z } from "zod";
+import { updateElectronApp, UpdateSourceType } from "update-electron-app";
 
 import { origin, resolveAsset } from "./assets";
 import { startBackend, type Backend } from "./backend-process";
@@ -34,7 +36,7 @@ const LocalPath = z
 // Give development runs their own name to keep their data separate.
 // tooling replaces this flag at build time; release bundles cannot enable Vite.
 const developmentBuild =
-  !app.isPackaged || process.env.REAGENT_DESKTOP_BUILD === "development";
+  !app.isPackaged || process.env.ENDO_DESKTOP_BUILD === "development";
 /** Report command-line failures directly; packaged launches show an error after ready. */
 function fail(cause: unknown): void {
   console.error(cause);
@@ -43,16 +45,16 @@ function fail(cause: unknown): void {
     return;
   }
   void app.whenReady().then(() => {
-    dialog.showErrorBox("Reagent could not start", String(cause));
+    dialog.showErrorBox("Endo could not start", String(cause));
     app.exit(1);
   });
 }
 
 // Register protocols before ready, while catching synchronous configuration errors too.
 function start(): void {
-  app.setName(developmentBuild ? "Reagent Development" : "Reagent");
+  app.setName(developmentBuild ? "Endo Development" : "Endo");
 
-  // reagent://app addresses the files shipped with the app.
+  // endo://app addresses the files shipped with the app.
   // Register it before Electron is ready so these pages can use browser features.
   protocol.registerSchemesAsPrivileged([
     {
@@ -69,7 +71,7 @@ function start(): void {
   ]);
 
   // Development loads Vite's local server; an installed app loads bundled files.
-  const development = developmentBuild && process.env.REAGENT_DESKTOP_DEV_URL;
+  const development = developmentBuild && process.env.ENDO_DESKTOP_DEV_URL;
   const address = new URL(development || origin);
   if (
     development &&
@@ -77,7 +79,7 @@ function start(): void {
   )
     throw new Error("Desktop development requires an HTTP loopback URL");
 
-  /** Returns the address without its page path, including for reagent:// URLs. */
+  /** Returns the address without its page path, including for endo:// URLs. */
   function originOf(url: URL): string {
     return `${url.protocol}//${url.host}`;
   }
@@ -87,6 +89,9 @@ function start(): void {
   let backend: Backend | undefined;
   let quitting = false;
   let stopping = false;
+  let installUpdateOnQuit = false;
+  let updates: ReturnType<typeof updateElectronApp> | undefined;
+  let readyUpdate: string | undefined;
   // A second launch focuses the existing window instead of opening another backend.
   app.on("second-instance", () => {
     const window = BrowserWindow.getAllWindows()[0];
@@ -100,8 +105,8 @@ function start(): void {
   async function backendExited(code: number): Promise<void> {
     const { response } = await dialog.showMessageBox({
       type: "error",
-      title: "Reagent stopped",
-      message: `The Reagent backend exited unexpectedly (${code}).`,
+      title: "Endo stopped",
+      message: `The Endo backend exited unexpectedly (${code}).`,
       buttons: ["Relaunch", "Quit"],
       defaultId: 0,
       cancelId: 1,
@@ -157,7 +162,7 @@ function start(): void {
   async function createWindow(path = "/app"): Promise<void> {
     if (quitting) return;
     const window = new BrowserWindow({
-      title: "Reagent",
+      title: "Endo",
       width: 1280,
       height: 840,
       minWidth: 800,
@@ -188,7 +193,10 @@ function start(): void {
         cancelId: 0,
       });
       if (discard === 1) event.preventDefault();
-      else quitting = false;
+      else {
+        quitting = false;
+        installUpdateOnQuit = false;
+      }
     });
     // Open external links in the browser, keeping this window on our app pages.
     window.webContents.setWindowOpenHandler(({ url }) => {
@@ -218,11 +226,13 @@ function start(): void {
     if (stopping) return;
     stopping = true;
     quitting = true;
+    updates?.stopUpdates();
     void Promise.resolve(backend?.stop()).then(() => {
       // The backend has exited; let the next Quit request close Electron.
       app.removeListener("before-quit", beforeQuit);
       app.removeListener("will-quit", stopBeforeQuit);
-      app.quit();
+      if (installUpdateOnQuit) autoUpdater.quitAndInstall();
+      else app.quit();
     }, fail);
   }
   function beforeQuit(event: Electron.Event): void {
@@ -251,11 +261,8 @@ function start(): void {
         session.defaultSession.setPermissionCheckHandler(() => false);
         // Browser storage stays in userData; application files share home.
         const home = resolve(
-          app.commandLine.getSwitchValue("reagent-home") ||
-            join(
-              app.getPath("home"),
-              developmentBuild ? ".reagent-dev" : ".reagent",
-            ),
+          app.commandLine.getSwitchValue("endo-home") ||
+            join(app.getPath("home"), developmentBuild ? ".endo-dev" : ".endo"),
         );
         await mkdir(home, { recursive: true });
         if (quitting) return;
@@ -319,18 +326,30 @@ function start(): void {
           assertTrustedFrame(event);
           shell.showItemInFolder(LocalPath.parse(input));
         });
+        // New windows recover downloads completed before their subscription.
+        ipcMain.handle("desktop.updateReady", (event) => {
+          assertTrustedFrame(event);
+          return readyUpdate ?? null;
+        });
+        ipcMain.handle("desktop.restartToUpdate", (event) => {
+          assertTrustedFrame(event);
+          if (!readyUpdate || quitting) return;
+          // Normal Quit lets editors save or cancel before the backend stops.
+          installUpdateOnQuit = true;
+          app.quit();
+        });
         // Electron has no permission request; macOS asks when the app first notifies.
         ipcMain.handle("desktop.enableNotifications", (event) => {
           assertTrustedFrame(event);
           showNotification({
             type: "notify",
             title: "Notifications are on",
-            body: "Reagent will notify you here when scheduled work needs you.",
+            body: "Endo will notify you here when scheduled work needs you.",
             sound: "system",
           });
         });
         if (!development) {
-          // Serve packaged pages from disk when the browser asks for reagent://app.
+          // Serve packaged pages from disk when the browser asks for endo://app.
           const directory = join(app.getAppPath(), "renderer");
           session.defaultSession.protocol.handle(
             new URL(origin).protocol.slice(0, -1),
@@ -367,6 +386,29 @@ function start(): void {
         });
         // The backend and page access rules are ready; load the first window.
         await createWindow();
+        // The build embeds the feed only for signed, notarized production apps.
+        if (
+          !developmentBuild &&
+          process.platform === "darwin" &&
+          process.arch === "arm64" &&
+          process.env.ENDO_UPDATE_URL &&
+          !quitting
+        ) {
+          updates = updateElectronApp({
+            updateSource: {
+              type: UpdateSourceType.StaticStorage,
+              baseUrl: process.env.ENDO_UPDATE_URL,
+            },
+            updateInterval: "10 minutes",
+            // Offer a restart in the sidebar; Squirrel also installs on normal quit.
+            onNotifyUser: ({ releaseName }) => {
+              updates?.stopUpdates();
+              readyUpdate = releaseName;
+              for (const window of BrowserWindow.getAllWindows())
+                window.webContents.send("desktop.updateReady", releaseName);
+            },
+          });
+        }
       })
       .catch((cause: unknown) => {
         if (!quitting) fail(cause);

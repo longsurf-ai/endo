@@ -108,7 +108,7 @@ function localAccess(server: Server, access: LocalAccess) {
  * With `host.access`, every request must present the bound Host, the
  * trusted Origin, and the token; failures answer 401 before any routing happens.
  * @example
- * const server = await createServer({home: '/tmp/reagent'}, {access: {token, origin: 'reagent://app'}});
+ * const server = await createServer({home: '/tmp/endo'}, {access: {token, origin: 'endo://app'}});
  * server.listen(0, '127.0.0.1');
  */
 export async function createServer(

@@ -83,7 +83,7 @@ export namespace ModelsDev {
    * const catalog = ModelsDev.create({
    *   cacheDirectory: '/tmp/openchart-models',
    *   fetchEnabled: false,
-   *   userAgent: 'Reagent',
+   *   userAgent: 'Endo',
    * });
    * const providers = await catalog.get();
    */
