@@ -12,6 +12,11 @@ playwright-report/
 blob-report/
 .vite/
 .cache/
+# HyperFrames preview and snapshot caches, and demo renders.
+.hyperframes/
+.thumbnails/
+.waveform-cache/
+demo/media/*/renders/
 
 # Credentials and machine-local state.
 .env
