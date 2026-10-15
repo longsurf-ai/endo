@@ -1,8 +1,10 @@
 # Endo desktop icon
 
 The canonical artwork is [endo.png](../../../app/src/components/ui/brand/endo.png).
-Use the supplied colors, shape and white background unchanged. The app sidebar,
-favicon and repository README use that same image.
+It preserves the supplied ribbon design with a transparent background and tight
+framing: the mark fills about 90% of the image height. The app sidebar, favicon,
+repository README and native app icon use that same image without a background
+tile, so the artwork stays legible at small sizes.
 
 `icon.icns` is a checked-in macOS export used by development and production
 packages. Regenerate it from the repository root on macOS:

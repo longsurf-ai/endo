@@ -26,7 +26,7 @@ export function LeftSidebar({
       <SidebarHeader className="px-1">
         <div className="flex h-9 items-center justify-between px-2">
           <div className="flex items-center gap-2">
-            <EndoMark className="size-8 rounded-md" />
+            <EndoMark className="size-5 shrink-0" />
             <span className="font-studio font-medium">Endo</span>
           </div>
           <div className="flex items-center gap-1">
