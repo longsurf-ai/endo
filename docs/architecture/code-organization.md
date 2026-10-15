@@ -1,13 +1,13 @@
 # Code organization
 
-Reagent is a bare-bones desktop framework for agentic apps. It separates the
+Endo is a bare-bones desktop framework for agentic apps. It separates the
 platform-independent app, the server, the Electron host, and shared packages.
 Resource ownership follows [resource.md](resource.md).
 
 ## Repository
 
 ```text
-reagent/
+endo/
   justfile                    every developer command (install, desktop, check, migration, …)
   package.json, bun.lock      one Bun workspace
   app/                        shared React app (renderer); no Electron imports

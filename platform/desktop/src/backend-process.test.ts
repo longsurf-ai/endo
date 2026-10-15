@@ -17,7 +17,7 @@ const init = {
   type: "init" as const,
   token: "token",
   home: "/profile",
-  rendererOrigin: "reagent://app",
+  rendererOrigin: "endo://app",
 };
 let child: FakeChild;
 const onExit = vi.fn();

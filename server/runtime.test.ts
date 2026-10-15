@@ -12,7 +12,7 @@ test("installs no feature plugins, so analyst prompts reject unowned plugin inpu
     home: temporaryHome(),
     databasePath: ":memory:",
     config: ConfigProvider.fromUnknown({}),
-    models: { fetchEnabled: false, userAgent: "Reagent/PluginTest" },
+    models: { fetchEnabled: false, userAgent: "Endo/PluginTest" },
   });
   try {
     await runtime.runPromise(

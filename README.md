@@ -1,17 +1,21 @@
-# Reagent
+<p align="center">
+  <img src="app/src/components/ui/brand/endo.png" alt="Endo logo" width="160" height="160" />
+</p>
+
+# Endo
 
 1. **Any agent, your subscription, one harness.**
 2. **Meta harness, orchestrating any workflow.**
 3. **A framework where humans and agents work together.**
 
-Reagent is an open-source desktop app and framework for building agentic
+Endo is an open-source desktop app and framework for building agentic
 applications. It runs the agents you already pay for inside one harness, lets
 you compose and schedule the work they do, and gives people and agents the same
 typed data to work on.
 
 ## Any agent, your subscription, one harness
 
-Reagent drives Codex, Claude Code and Antigravity natively through their own
+Endo drives Codex, Claude Code and Antigravity natively through their own
 CLIs, signed in with the accounts you already have. There are no API keys to
 paste: usage comes from your existing subscription, and Settings → Models shows
 each provider's plan usage. The app installs and manages a pinned runtime
@@ -62,6 +66,17 @@ Sign in to at least one provider (an existing `codex`, `claude` or Antigravity
 login works, or use Settings → Models), then ask something like "Every weekday
 at 9 AM, summarize my priorities for the day" and open the Schedule page.
 
+## Desktop releases
+
+Endo packages as a standalone Mac app. Signed Apple Silicon releases download
+updates in the background and offer a restart button in the sidebar. Unsaved
+editors can cancel the restart; development builds never update automatically.
+
+Maintainers can build a signed DMG and ZIP with `just desktop-release`, then
+publish the verified downloads and update feed with `just desktop-publish <version>`.
+See the [release guide](docs/operations/desktop-release.md) for signing setup,
+installation checks, and hosting. Creating or merging a PR does not publish a download.
+
 ## Building on it
 
 - Add user data as a Resource: [Adding a Resource](docs/architecture/resource.md#adding-a-resource).
@@ -71,8 +86,8 @@ at 9 AM, summarize my priorities for the day" and open the Schedule page.
 - Add a page under `app/src/app/` and a feature under `app/src/features/`.
 
 See the [development guide](docs/development.md) and the
-[code organization guide](docs/architecture/code-organization.md). Reagent is at
-0.1.0, so expect breaking changes.
+[code organization guide](docs/architecture/code-organization.md). Endo is at
+0.1.x, so expect breaking changes.
 
 ## License
 
@@ -80,7 +95,7 @@ See the [development guide](docs/development.md) and the
 
 ## Credits
 
-Reagent began as the core of [OpenChart](https://github.com/longsurf-ai/openchart).
+Endo began as the core of [OpenChart](https://github.com/longsurf-ai/openchart).
 It credits [Jan](https://www.jan.ai/) for the app's design and visual style,
 [OpenCode](https://opencode.ai/) and [Effect](https://effect.website/),
 [assistant-ui](https://www.assistant-ui.com/) and [AG-UI](https://docs.ag-ui.com/introduction),

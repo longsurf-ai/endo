@@ -5,6 +5,8 @@ import { expect, test, vi } from "vitest";
 
 import { LeftSidebar } from "@openchart/app/app/left-sidebar";
 import { SidebarProvider } from "@openchart/app/components/ui/sidebar";
+import { AppHostProvider } from "@openchart/app/lib/host/host";
+import { testAppHost } from "@openchart/app/testing/test-utils";
 
 // The conversation list has its own tests.
 vi.mock("@openchart/app/app/left-sidebar/nav-chats", () => ({
@@ -20,9 +22,11 @@ test("the sidebar links to every application section", () => {
   const onCreateChat = vi.fn();
   render(
     <MemoryRouter>
-      <SidebarProvider>
-        <LeftSidebar chats={{} as never} onCreateChat={onCreateChat} />
-      </SidebarProvider>
+      <AppHostProvider value={testAppHost()}>
+        <SidebarProvider>
+          <LeftSidebar chats={{} as never} onCreateChat={onCreateChat} />
+        </SidebarProvider>
+      </AppHostProvider>
     </MemoryRouter>,
   );
   screen.getByRole("button", { name: /New Chat/ }).click();

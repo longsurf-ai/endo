@@ -4,7 +4,7 @@ import { stat } from "node:fs/promises";
 import { extname, isAbsolute, relative, resolve } from "node:path";
 
 /** The desktop's local application origin; it never resolves over the network. */
-export const origin = "reagent://app";
+export const origin = "endo://app";
 
 /**
  * Resolves a permitted asset or SPA document request inside the renderer bundle.
@@ -12,7 +12,7 @@ export const origin = "reagent://app";
  * return undefined. Filesystem failures other than missing paths propagate.
  * @example
  * const file = await resolveAsset('/bundle/renderer', new Request(
- *   'reagent://app/app', {headers: {accept: 'text/html'}},
+ *   'endo://app/app', {headers: {accept: 'text/html'}},
  * ));
  */
 export async function resolveAsset(

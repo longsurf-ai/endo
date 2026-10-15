@@ -73,7 +73,7 @@ Getting and reading a Workspace never installs dependencies, creates symlinks, o
 <home>/workspaces/<slug>/
 ```
 
-- The desktop release uses `~/.reagent` (`~/.reagent-dev` for unpackaged development builds). `just desktop` uses `platform/desktop/.artifacts/dev-profile/home` in the current checkout, and Electron userData lives in its parent directory `dev-profile`, so different worktrees do not share the database and browser storage. Smoke tests and `demo/agent/server.ts` use a temporary home.
+- The desktop release uses `~/.endo` (`~/.endo-dev` for unpackaged development builds). `just desktop` uses `platform/desktop/.artifacts/dev-profile/home` in the current checkout, and Electron userData lives in its parent directory `dev-profile`, so different worktrees do not share the database and browser storage. Smoke tests and `demo/agent/server.ts` use a temporary home.
 - Desktop `init` uses home instead of databasePath. Electron userData owns browser storage.
 - `databasePath: ':memory:'` stays only as a test override. Tests still provide a temporary home.
 - The `resources.workspace.createLocal` transition prepares the `<home>/workspaces/<slug>/` directory in resolve, and reuses register in apply to register its canonical root. Creating a directory on disk does not register it by itself.

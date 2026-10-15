@@ -44,7 +44,7 @@ await mkdir(artifacts, { recursive: true });
 // Relocate the whole package outside the checkout so omitted runtime files
 // cannot resolve through the repository's ancestor node_modules directories.
 const profile = await realpath(
-  await mkdtemp(join(tmpdir(), "reagent-desktop-smoke-")),
+  await mkdtemp(join(tmpdir(), "endo-desktop-smoke-")),
 );
 const sourceBundle =
   process.platform === "darwin"
@@ -85,7 +85,7 @@ async function verifySettings(page: Page) {
           nodeIntegration: false,
         },
       });
-      void sibling.loadURL("reagent://app/app");
+      void sibling.loadURL("endo://app/app");
     },
     join(applicationDirectory, "preload/preload.cjs"),
   );
@@ -95,7 +95,7 @@ async function verifySettings(page: Page) {
     if (message.type() === "error") errors.push(message.text());
   });
   try {
-    await sibling.goto("reagent://app/app/settings/interface");
+    await sibling.goto("endo://app/app/settings/interface");
     await expect(sibling.locator("html")).toHaveClass(/dark/);
     const saved = JSON.parse(await readFile(filename, "utf8"));
     saved.appearance.theme = "light";
@@ -167,7 +167,7 @@ async function verifySettings(page: Page) {
   await page.screenshot({
     path: join(artifacts, "desktop-model-settings.png"),
   });
-  await page.goto("reagent://app/app");
+  await page.goto("endo://app/app");
   await page
     .getByRole("textbox", { name: "Message", exact: true })
     .fill("Reply with CONFIG_NATIVE_OK.");
@@ -214,7 +214,7 @@ export default defineWorkflow({
 });`,
   );
   await page.getByRole("button", { name: /^New Chat/ }).click();
-  await expect(page).not.toHaveURL(`reagent://app/app/sessions/${sessionId}`);
+  await expect(page).not.toHaveURL(`endo://app/app/sessions/${sessionId}`);
   await expect(
     page.getByRole("heading", { name: "Where should we begin?" }),
   ).toBeVisible();
@@ -279,7 +279,7 @@ async function quit() {
   const stopped = await application!.evaluate(({ app }) => {
     const backend = app
       .getAppMetrics()
-      .find((metric) => metric.name === "Reagent Backend");
+      .find((metric) => metric.name === "Endo Backend");
     if (!backend) throw new Error("Packaged backend process is missing");
     return new Promise<{ pid: number; elapsed: number }>((resolve, reject) => {
       const start = Date.now();
@@ -289,10 +289,7 @@ async function quit() {
         reject(new Error("Backend did not exit during Quit"));
       }, 10_000);
       app.on("child-process-gone", (_event, details) => {
-        if (
-          details.name === "Reagent Backend" &&
-          details.reason !== "clean-exit"
-        )
+        if (details.name === "Endo Backend" && details.reason !== "clean-exit")
           reject(new Error(`Backend exited abnormally: ${details.reason}`));
       });
       // Hold only the final main-process exit until Playwright reads the result.
@@ -340,15 +337,15 @@ async function launch(): Promise<Page> {
   delete env.ELECTRON_NO_ATTACH_CONSOLE;
   delete env.NODE_PATH;
   delete env.NODE_OPTIONS;
-  delete env.REAGENT_DESKTOP_DEV_URL;
+  delete env.ENDO_DESKTOP_DEV_URL;
   env.PATH = `${nativeBin}:${env.PATH ?? ""}`;
-  env.REAGENT_SMOKE_STATE = nativeState;
+  env.ENDO_SMOKE_STATE = nativeState;
   application = await _electron.launch({
     executablePath: executable,
     cwd: profile,
     args: [
       `--user-data-dir=${userData}`,
-      `--reagent-home=${home}`,
+      `--endo-home=${home}`,
       ...(process.platform === "darwin" && keychain === "mock"
         ? ["--use-mock-keychain"]
         : []),
@@ -356,7 +353,7 @@ async function launch(): Promise<Page> {
     // Only release builds must ignore a supplied development URL.
     env: development
       ? env
-      : { ...env, REAGENT_DESKTOP_DEV_URL: "https://untrusted.test" },
+      : { ...env, ENDO_DESKTOP_DEV_URL: "https://untrusted.test" },
     timeout: 30_000,
   });
   application.process().stdout?.on("data", (chunk: Buffer) => {
@@ -377,7 +374,7 @@ async function launch(): Promise<Page> {
   );
   assert.equal(
     await application.evaluate(({ app }) => app.getName()),
-    development ? "Reagent Development" : "Reagent",
+    development ? "Endo Development" : "Endo",
   );
   const page = await application.firstWindow();
   page.setDefaultTimeout(15_000);
@@ -394,7 +391,7 @@ async function launch(): Promise<Page> {
     if (message.type() === "error") errors.push(message.text().slice(0, 600));
   });
   page.setDefaultTimeout(30_000);
-  await expect(page).toHaveURL(/^reagent:\/\/app\//);
+  await expect(page).toHaveURL(/^endo:\/\/app\//);
   return page;
 }
 
@@ -551,7 +548,7 @@ try {
   ).toHaveText("Dark");
   await page.screenshot({ path: join(artifacts, "desktop-settings.png") });
   const settings = await verifySettings(page);
-  await page.goto("reagent://app/app");
+  await page.goto("endo://app/app");
   await expect(
     page.getByRole("textbox", { name: "Message", exact: true }),
   ).toBeVisible();
@@ -563,7 +560,7 @@ try {
 
   // New Chat opens a fresh draft; the earlier chat remains navigable.
   await page.getByRole("button", { name: /^New Chat/ }).click();
-  await expect(page).toHaveURL("reagent://app/app");
+  await expect(page).toHaveURL("endo://app/app");
   const session = settings.sessionId;
   const thread = page.getByRole("button", {
     name: settings.sessionTitle,
@@ -571,7 +568,7 @@ try {
   });
   await expect(thread).toBeVisible();
   await thread.click();
-  await expect(page).toHaveURL(`reagent://app/app/sessions/${session}`);
+  await expect(page).toHaveURL(`endo://app/app/sessions/${session}`);
 
   const isolation = await application!.evaluate(({ app, BrowserWindow }) => {
     const pid = BrowserWindow.getAllWindows()[0]!.webContents.getOSProcessId();
@@ -588,10 +585,10 @@ try {
   );
 
   const boundary = await application!.evaluate(async ({ net }) => {
-    const missing = await net.fetch("reagent://app/assets/missing.js");
-    const escape = await net.fetch("reagent://app/..%2fpackage.json");
-    const mockWorker = await net.fetch("reagent://app/mockServiceWorker.js");
-    const document = await net.fetch("reagent://app/app", {
+    const missing = await net.fetch("endo://app/assets/missing.js");
+    const escape = await net.fetch("endo://app/..%2fpackage.json");
+    const mockWorker = await net.fetch("endo://app/mockServiceWorker.js");
+    const document = await net.fetch("endo://app/app", {
       headers: { accept: "text/html" },
     });
     return {
@@ -624,7 +621,7 @@ try {
   await page
     .getByRole("button", { name: settings.sessionTitle, exact: true })
     .click();
-  await expect(page).toHaveURL(`reagent://app/app/sessions/${session}`);
+  await expect(page).toHaveURL(`endo://app/app/sessions/${session}`);
   await expect(page.locator("html")).toHaveClass(/light/);
   await page.getByRole("link", { name: "Settings", exact: true }).click();
   await page.getByRole("link", { name: "Models", exact: true }).click();

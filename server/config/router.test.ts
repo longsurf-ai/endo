@@ -49,7 +49,7 @@ async function serve(initial?: object) {
     home: directory,
     models: {
       fetchEnabled: false,
-      userAgent: "Reagent/ConfigTest",
+      userAgent: "Endo/ConfigTest",
     },
   }).catch(async (error) => {
     await rm(directory, { recursive: true, force: true });

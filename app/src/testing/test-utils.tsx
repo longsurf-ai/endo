@@ -57,6 +57,8 @@ export function testAppHost(overrides: Partial<AppHost> = {}): AppHost {
     revealPath: async () => {},
     changelog: [],
     enableNotifications: async () => {},
+    onUpdateReady: () => () => {},
+    restartToUpdate: async () => {},
     ...overrides,
   };
 }

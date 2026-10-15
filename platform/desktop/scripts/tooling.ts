@@ -5,7 +5,7 @@ import { once } from "node:events";
 import { existsSync } from "node:fs";
 import { cp, glob, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { builtinModules, createRequire } from "node:module";
-import { basename, dirname, join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { packager } from "@electron/packager";
 import { notificationSounds } from "@openchart/notification";
@@ -15,6 +15,11 @@ import { z } from "zod";
 import { generateWorkflowTypes } from "@openchart/server/agent/workflow/generate-workflow-types";
 import metadata from "@openchart/desktop/package.json" with { type: "json" };
 import { rendererConfig } from "./renderer-config.ts";
+import {
+  createRelease,
+  releaseBaseUrl,
+  signingIdentity as defaultSigningIdentity,
+} from "./release.ts";
 
 const require = createRequire(import.meta.url);
 const directory = dirname(require.resolve("@openchart/desktop/package.json"));
@@ -25,25 +30,62 @@ const nodeExternal = [/^node:/, ...builtinModules, "electron"];
 const runtimePackages = ["@anthropic-ai/claude-agent-sdk", "typescript"];
 
 async function main() {
-  const command = z.enum(["dev", "build", "package"]).parse(process.argv[2]);
+  const command = z
+    .enum(["dev", "build", "package", "release"])
+    .parse(process.argv[2]);
   const environment = z
     .enum(["development", "production"])
     .parse(
       command === "dev" ? "development" : (process.argv[3] ?? "production"),
     );
   const development = environment === "development";
+  const release = command === "release";
+  if (
+    release &&
+    (development || process.platform !== "darwin" || process.arch !== "arm64")
+  )
+    throw new Error(
+      "Releases require a production build on an Apple Silicon Mac",
+    );
+  const signingIdentity = development
+    ? "-"
+    : (process.env.ENDO_SIGNING_IDENTITY ??
+      (release ? defaultSigningIdentity : "-"));
+  const notaryProfile = development
+    ? undefined
+    : (process.env.ENDO_NOTARY_PROFILE ??
+      (release ? "openchart-notary" : undefined));
+  if (release && (signingIdentity === "-" || !notaryProfile))
+    throw new Error("Releases require Developer ID signing and notarization");
   process.env.NODE_ENV = development ? "development" : "production";
-  await buildDesktopRuntime(development);
+  await buildDesktopRuntime(
+    development,
+    signingIdentity !== "-" && !!notaryProfile,
+  );
   // Tailwind's content paths are relative to the shared app's directory.
   process.chdir(appDirectory);
   if (command === "dev") return runDevelopment();
   await buildRenderer();
-  if (command === "package") await packageApplication(development);
+  if (command === "package" || release) {
+    const executable = await packageApplication(
+      development,
+      signingIdentity,
+      notaryProfile,
+    );
+    if (release)
+      await createRelease(resolve(executable, "../../.."), metadata.version, {
+        signingIdentity,
+        notaryProfile: notaryProfile!,
+      });
+  }
 }
 
-async function buildDesktopRuntime(development: boolean) {
+async function buildDesktopRuntime(
+  development: boolean,
+  updatesEnabled: boolean,
+) {
   await rm(staging, { recursive: true, force: true });
-  await buildMain(development);
+  await buildMain(development, updatesEnabled);
   await buildBackend();
   await buildPreload();
   // Every command produces a self-contained runtime, including desktop-build.
@@ -53,8 +95,8 @@ async function buildDesktopRuntime(development: boolean) {
     join(staging, "package.json"),
     JSON.stringify(
       {
-        name: "reagent-desktop",
-        productName: "Reagent",
+        name: "endo-desktop",
+        productName: "Endo",
         version: metadata.version,
         type: "module",
         main: "main/main.js",
@@ -65,11 +107,14 @@ async function buildDesktopRuntime(development: boolean) {
   );
 }
 
-async function buildMain(development: boolean) {
+async function buildMain(development: boolean, updatesEnabled: boolean) {
   await build({
     configFile: false,
     define: {
-      "process.env.REAGENT_DESKTOP_BUILD": JSON.stringify(
+      "process.env.ENDO_UPDATE_URL": JSON.stringify(
+        updatesEnabled ? releaseBaseUrl : "",
+      ),
+      "process.env.ENDO_DESKTOP_BUILD": JSON.stringify(
         development ? "development" : "production",
       ),
     },
@@ -186,7 +231,7 @@ async function prepareDevelopmentHost() {
   const profile = join(directory, ".artifacts/dev-profile");
   const args = [
     `--user-data-dir=${profile}`,
-    `--reagent-home=${join(profile, "home")}`,
+    `--endo-home=${join(profile, "home")}`,
   ];
   console.log("Desktop development profile:", profile);
   const executable = await packageApplication(true);
@@ -208,7 +253,7 @@ async function runElectron(executable: string, args: string[], devUrl: string) {
     stdio: "inherit",
     env: {
       ...env,
-      REAGENT_DESKTOP_DEV_URL: devUrl,
+      ENDO_DESKTOP_DEV_URL: devUrl,
     },
   });
   process.on("SIGINT", () => child.kill("SIGINT"));
@@ -233,16 +278,13 @@ async function buildRenderer() {
   });
 }
 
-async function packageApplication(development: boolean) {
-  const name = development ? "Reagent Development" : "Reagent";
-  // Production signing and notarization are opt-in; without them macOS builds
-  // are ad-hoc signed and run only on this computer.
-  const signingIdentity = development
-    ? "-"
-    : (process.env.REAGENT_SIGNING_IDENTITY ?? "-");
-  const notaryProfile = development
-    ? undefined
-    : process.env.REAGENT_NOTARY_PROFILE;
+async function packageApplication(
+  development: boolean,
+  signingIdentity = "-",
+  notaryProfile?: string,
+) {
+  const name = development ? "Endo Development" : "Endo";
+  // Local packages use ad-hoc signing; the release command requires Developer ID.
   // @agent invariant: Development and release execute the same packaged runtime
   // layout on every platform. Only app identity and output location vary here.
   const [bundle] = await packager({
@@ -263,8 +305,8 @@ async function packageApplication(development: boolean) {
         ? join(directory, "assets/icon.icns")
         : undefined,
     appBundleId: development
-      ? "ai.longsurf.reagent.development"
-      : "ai.longsurf.reagent",
+      ? "ai.longsurf.endo.development"
+      : "ai.longsurf.endo",
     electronVersion: metadata.devDependencies.electron,
     asar: true,
     // UNNotificationSound searches the main bundle, not Electron's ASAR archive.
@@ -298,7 +340,7 @@ async function packageApplication(development: boolean) {
     overwrite: true,
   });
   if (!bundle) throw new Error("Electron Packager produced no application");
-  console.log("Packaged Reagent:", bundle);
+  console.log("Packaged Endo:", bundle);
   return process.platform === "darwin"
     ? join(bundle, `${name}.app`, "Contents/MacOS", name)
     : join(bundle, `${name}${process.platform === "win32" ? ".exe" : ""}`);

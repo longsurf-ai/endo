@@ -37,7 +37,7 @@ export function startBackend(input: {
 }): Backend {
   // Run the backend separately from main and the windows.
   const child = utilityProcess.fork(input.modulePath, [], {
-    serviceName: "Reagent Backend",
+    serviceName: "Endo Backend",
     stdio: "inherit",
   });
   // Attach listeners before sending setup, so a quick reply cannot be missed.

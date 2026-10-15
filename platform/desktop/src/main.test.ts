@@ -20,8 +20,24 @@ afterEach(() => {
 async function host({
   production = false,
   devUrl = "http://127.0.0.1:5173",
-}: { production?: boolean; devUrl?: string } = {}) {
+  updateUrl = "https://downloads.longsurf.ai/endo/darwin/arm64",
+  platform = process.platform,
+  arch = process.arch,
+}: {
+  production?: boolean;
+  devUrl?: string;
+  updateUrl?: string;
+  platform?: NodeJS.Platform;
+  arch?: string;
+} = {}) {
   vi.resetModules();
+  const platformDescriptor = Object.getOwnPropertyDescriptor(
+    process,
+    "platform",
+  )!;
+  const archDescriptor = Object.getOwnPropertyDescriptor(process, "arch")!;
+  Object.defineProperty(process, "platform", { value: platform });
+  Object.defineProperty(process, "arch", { value: arch });
   const resourcesPath = Object.getOwnPropertyDescriptor(
     process,
     "resourcesPath",
@@ -30,16 +46,16 @@ async function host({
     value: "/app/Contents/Resources",
     configurable: true,
   });
-  vi.stubEnv("REAGENT_DESKTOP_DEV_URL", devUrl);
-  vi.stubEnv(
-    "REAGENT_DESKTOP_BUILD",
-    production ? "production" : "development",
-  );
+  vi.stubEnv("ENDO_DESKTOP_DEV_URL", devUrl);
+  vi.stubEnv("ENDO_UPDATE_URL", updateUrl);
+  vi.stubEnv("ENDO_DESKTOP_BUILD", production ? "production" : "development");
   const signals = (["SIGINT", "SIGTERM"] as const).map((signal) => ({
     signal,
     listeners: process.listeners(signal),
   }));
   cleanup = () => {
+    Object.defineProperty(process, "platform", platformDescriptor);
+    Object.defineProperty(process, "arch", archDescriptor);
     if (resourcesPath)
       Object.defineProperty(process, "resourcesPath", resourcesPath);
     else Reflect.deleteProperty(process, "resourcesPath");
@@ -120,8 +136,22 @@ async function host({
   const openPath = vi.fn(async () => "");
   const showItemInFolder = vi.fn();
   const openExternal = vi.fn(async () => {});
+  const quitAndInstall = vi.fn();
+  const stopUpdates = vi.fn();
+  const updateElectronApp = vi.fn<
+    (options: {
+      updateSource: { baseUrl: string };
+      updateInterval: string;
+      onNotifyUser: (info: { releaseName: string }) => void;
+    }) => { stopUpdates: () => void }
+  >(() => ({ stopUpdates }));
+  vi.doMock("update-electron-app", () => ({
+    updateElectronApp,
+    UpdateSourceType: { StaticStorage: 1 },
+  }));
   vi.doMock("electron", () => ({
     app,
+    autoUpdater: { quitAndInstall },
     BrowserWindow: Window,
     dialog: {
       showErrorBox,
@@ -163,8 +193,95 @@ async function host({
     showItemInFolder,
     openExternal,
     showMessageBox,
+    updateElectronApp,
+    stopUpdates,
+    quitAndInstall,
   };
 }
+
+test.each([
+  { production: false, platform: "darwin" as const, arch: "arm64" },
+  {
+    production: true,
+    platform: "darwin" as const,
+    arch: "arm64",
+    updateUrl: "",
+  },
+  { production: true, platform: "darwin" as const, arch: "x64" },
+  { production: true, platform: "linux" as const, arch: "arm64" },
+])(
+  "does not update development, ad-hoc or unsupported builds: %j",
+  async (options) => {
+    const runtime = await host(options);
+    runtime.ready.resolve(4321);
+    await vi.waitFor(() => expect(runtime.opened).toHaveBeenCalledOnce());
+    expect(runtime.updateElectronApp).not.toHaveBeenCalled();
+  },
+);
+
+test("downloaded updates use Endo's feed, trust only app frames and wait for safe shutdown", async () => {
+  const runtime = await host({
+    production: true,
+    platform: "darwin",
+    arch: "arm64",
+  });
+  runtime.ready.resolve(4321);
+  await vi.waitFor(() =>
+    expect(runtime.updateElectronApp).toHaveBeenCalledOnce(),
+  );
+  const options = runtime.updateElectronApp.mock.calls[0]![0];
+  expect(options.updateSource.baseUrl).toBe(
+    "https://downloads.longsurf.ai/endo/darwin/arm64",
+  );
+  expect(options.updateInterval).toBe("10 minutes");
+  const window = runtime.windows[0]!;
+  window.webContents.mainFrame.url = "endo://app/app";
+  const trusted = {
+    sender: window.webContents,
+    senderFrame: window.webContents.mainFrame,
+  };
+  const channel = (name: string) =>
+    runtime.handle.mock.calls.find(([candidate]) => candidate === name)![1];
+  const read = channel("desktop.updateReady");
+  const restart = channel("desktop.restartToUpdate");
+  expect(read(trusted)).toBeNull();
+  restart(trusted);
+  expect(runtime.app.quit).not.toHaveBeenCalled();
+  options.onNotifyUser({ releaseName: "Endo 0.1.2" });
+  expect(runtime.stopUpdates).toHaveBeenCalledOnce();
+  expect(runtime.showMessageBox).not.toHaveBeenCalled();
+  expect(window.webContents.send).toHaveBeenCalledExactlyOnceWith(
+    "desktop.updateReady",
+    "Endo 0.1.2",
+  );
+  expect(read(trusted)).toBe("Endo 0.1.2");
+  for (const operation of [read, restart]) {
+    expect(() => operation({ ...trusted, senderFrame: null })).toThrow(
+      "untrusted frame",
+    );
+    expect(() =>
+      operation({ ...trusted, senderFrame: { url: trusted.senderFrame.url } }),
+    ).toThrow("untrusted frame");
+  }
+  restart(trusted);
+  expect(runtime.app.quit).toHaveBeenCalledOnce();
+  const event = { preventDefault: vi.fn() };
+  runtime.app.emit("before-quit", event);
+  restart(trusted);
+  expect(runtime.app.quit).toHaveBeenCalledOnce();
+  window.webContents.emit("will-prevent-unload", event);
+  expect(runtime.stop).not.toHaveBeenCalled();
+  expect(runtime.quitAndInstall).not.toHaveBeenCalled();
+  restart(trusted);
+  expect(runtime.app.quit).toHaveBeenCalledTimes(2);
+  runtime.windows.length = 0;
+  runtime.app.emit("will-quit", event);
+  runtime.app.emit("will-quit", event);
+  expect(runtime.stop).toHaveBeenCalledOnce();
+  expect(runtime.quitAndInstall).not.toHaveBeenCalled();
+  runtime.stopped.resolve();
+  await vi.waitFor(() => expect(runtime.quitAndInstall).toHaveBeenCalledOnce());
+});
 
 test("development opens the app root and hands the backend only this run's paths", async () => {
   const runtime = await host();
@@ -381,7 +498,7 @@ test("turning notifications on shows one so macOS can ask, only for the app's ow
   expect(runtime.notifications).toHaveLength(1);
   expect(runtime.notifications[0]!.options).toEqual({
     title: "Notifications are on",
-    body: "Reagent will notify you here when scheduled work needs you.",
+    body: "Endo will notify you here when scheduled work needs you.",
     silent: false,
   });
   expect(runtime.notifications[0]!.show).toHaveBeenCalledOnce();

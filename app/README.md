@@ -1,6 +1,6 @@
-# Reagent app
+# Endo app
 
-The shared React app provides navigation and theme over the Reagent backend.
+The shared React app provides navigation and theme over the Endo backend.
 Chat uses assistant-ui for presentation; AG-UI owns the transcript
 and runtime projection, and React Query owns the complete Session directory and
 model list. See [DESIGN.md](DESIGN.md) for visual ownership.

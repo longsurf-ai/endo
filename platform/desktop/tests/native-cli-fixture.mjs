@@ -9,7 +9,7 @@ import {
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 
-const state = process.env.REAGENT_SMOKE_STATE;
+const state = process.env.ENDO_SMOKE_STATE;
 if (!state)
   throw new Error("Native fixture requires an isolated state directory");
 if (process.argv.includes("--version")) {

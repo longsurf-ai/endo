@@ -63,7 +63,7 @@ function makeAgentLayer(
     cacheDirectory: path.join(root, ".cache", "models"),
     runtimeDirectory: path.join(root, "model-providers"),
     fetchEnabled: true,
-    userAgent: "Reagent/1",
+    userAgent: "Endo/1",
     ...options.models,
   });
   const services = Layer.mergeAll(
