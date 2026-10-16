@@ -9,8 +9,8 @@ import {
 import { createAntigravityProvider } from "./provider";
 
 const executable = process.env.ANTIGRAVITY_LIVE;
-// Gemini Flash reports no cache reads; Pro and Claude do.
-const model = process.env.ANTIGRAVITY_LIVE_MODEL ?? "gemini-3.1-pro";
+// Gemini Flash reports no cache reads; Argon and Claude do.
+const model = process.env.ANTIGRAVITY_LIVE_MODEL ?? "gemini-4-argon";
 const effort = process.env.ANTIGRAVITY_LIVE_EFFORT ?? "low";
 
 const provider = executable

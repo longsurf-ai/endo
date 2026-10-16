@@ -127,34 +127,34 @@ export const PROVIDER_MANIFEST: RuntimeManifest<NativeProviderID> = {
   },
   antigravity: {
     "darwin-arm64": {
-      version: "1.2.16",
-      url: "https://github.com/google-antigravity/antigravity-cli/releases/download/1.2.16/agy_cli_mac_arm64.tar.gz",
+      version: "1.3.6",
+      url: "https://github.com/google-antigravity/antigravity-cli/releases/download/1.3.6/agy_cli_mac_arm64.tar.gz",
       integrity:
-        "sha512-g0pi3Jcs/fCc2wAce6ebtbya5azbqL2cTSk5BFt24Zyb227qxY7Yih3qoWcPyTNe7hhIL+LzJgPngiTelXOw/g==",
+        "sha512-Rzo0toXQoJ1IeQ6Lhrw+VF36uIn+DY/IHLfh/fwzb+eM5XAi47Q4x1TJPJz/6xP9vRd+UP3twIfVJzL6VHUYPw==",
       layout: "flat",
       executable: "antigravity",
     },
     "darwin-x64": {
-      version: "1.2.16",
-      url: "https://github.com/google-antigravity/antigravity-cli/releases/download/1.2.16/agy_cli_mac_x64.tar.gz",
+      version: "1.3.6",
+      url: "https://github.com/google-antigravity/antigravity-cli/releases/download/1.3.6/agy_cli_mac_x64.tar.gz",
       integrity:
-        "sha512-C9EfuvRIr8Z13eNhODsAsDQSpxzroD9sooq+o8jRlGJMFKtnyTkOJnG1BV7FgY7EPLVas9jSnFd8u6kXyoRrNw==",
+        "sha512-EX4yit+ttpp1QzU/6HtSdsAK4YnyuxmGjabmZyl8NcX2izU3o1Qotbn1rD/uQZKW2VR5kLJK+B5oSOape0qCXA==",
       layout: "flat",
       executable: "antigravity",
     },
     "linux-arm64": {
-      version: "1.2.16",
-      url: "https://github.com/google-antigravity/antigravity-cli/releases/download/1.2.16/agy_cli_linux_arm64_musl.tar.gz",
+      version: "1.3.6",
+      url: "https://github.com/google-antigravity/antigravity-cli/releases/download/1.3.6/agy_cli_linux_arm64_musl.tar.gz",
       integrity:
-        "sha512-P175UjZbWMNY7Xngu2F2ixev39j9AMz9ObBvUHicjABpiQz4hYPg7foZTB3dlkAhHwKo2qxYpB+b1zuseG5BTA==",
+        "sha512-tZIkXtneG700zPA6cDzu2uERmnxdCgbEyH/ST0xEFGJ7/jA/TDcjxUaJQU8w3XemkwoPKx8Vk/ThBiYfmKyUZA==",
       layout: "flat",
       executable: "antigravity",
     },
     "linux-x64": {
-      version: "1.2.16",
-      url: "https://github.com/google-antigravity/antigravity-cli/releases/download/1.2.16/agy_cli_linux_x64_musl.tar.gz",
+      version: "1.3.6",
+      url: "https://github.com/google-antigravity/antigravity-cli/releases/download/1.3.6/agy_cli_linux_x64_musl.tar.gz",
       integrity:
-        "sha512-R6EmFhOT0fqXjqOl3g5zcJpJ07dRopnFZvyYVV/Zh3ZNmFJjHpLMnQrDE+n/C4aHiOhZb9JG/kFFg/eKpYJ+HA==",
+        "sha512-5q1tme9luYqSv2VA8OXaGGs8i/3pc3Qjy3g6TwXvV+rby/AuXa+l3mKVJHhU5KK9rEerYebX3YXbXrLY28DqOQ==",
       layout: "flat",
       executable: "antigravity",
     },

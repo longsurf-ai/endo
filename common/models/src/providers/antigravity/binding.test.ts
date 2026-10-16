@@ -9,6 +9,7 @@ import { ModelsDev } from "@openchart/models/catalog";
 import {
   ANTIGRAVITY,
   TIER4,
+  TIER5,
   resolveModelTier,
 } from "@openchart/models/model-tiers";
 import {
@@ -68,6 +69,9 @@ function ready(result: ProviderDiscoveryResult) {
 }
 
 const ROWS = [
+  ["gemini-4-argon-medium", "Gemini 4 Argon (Medium)"],
+  ["gemini-4-argon-high", "Gemini 4 Argon (High)"],
+  ["gemini-4-argon-low", "Gemini 4 Argon (Low)"],
   ["gemini-3.8-flash-high", "Gemini 3.8 Flash (High)"],
   ["gemini-3.8-flash-medium", "Gemini 3.8 Flash (Medium)"],
   ["gemini-3.8-flash-low", "Gemini 3.8 Flash (Low)"],
@@ -181,6 +185,20 @@ describe("antigravity.createModelProvider", () => {
             cost: { input: 0.3, output: 2.5, cache_read: 0.03 },
             limit: { context: 1_048_576, output: 65_536 },
           }),
+          "gemini-4-argon": ModelsDev.Model.parse({
+            id: "gemini-4-argon",
+            name: "Gemini 4 Argon",
+            reasoning: true,
+            temperature: true,
+            tool_call: true,
+            attachment: true,
+            modalities: {
+              input: ["text", "image", "video", "audio", "pdf"],
+              output: ["text"],
+            },
+            cost: { input: 2, output: 10, cache_read: 0.1 },
+            limit: { context: 1_048_576, output: 32_768 },
+          }),
         },
       },
     });
@@ -194,6 +212,7 @@ describe("antigravity.createModelProvider", () => {
         model.availableVariants,
       ]),
     ).toEqual([
+      ["gemini-4-argon", 5, ["low", "medium", "high"]],
       ["claude-opus-5-5", 4, ["low", "medium", "high"]],
       ["claude-sonnet-5-5", 3, ["low"]],
       ["gemini-3.1-pro", 2, ["low", "high"]],
@@ -226,7 +245,27 @@ describe("antigravity.createModelProvider", () => {
     expect(
       provider.models.find((model) => model.id === "gemini-3.1-pro")?.cost,
     ).toBeUndefined();
+    expect(
+      provider.models.find((model) => model.id === "gemini-4-argon"),
+    ).toMatchObject({
+      name: "Gemini 4 Argon",
+      cost: { input: 2, output: 10, cache: { read: 0.1 } },
+      limit: { context: 1_048_576, output: 32_768 },
+    });
+    expect(resolveModelTier(ANTIGRAVITY, TIER5, provider.models)?.id).toBe(
+      "gemini-4-argon",
+    );
     expect(resolveModelTier(ANTIGRAVITY, TIER4, provider.models)?.id).toBe(
+      "claude-opus-5-5",
+    );
+  });
+
+  it("falls back to Claude Opus when the plan offers no Argon", async () => {
+    discoverModels.mockResolvedValue(
+      ROWS.filter((row) => !row.id.startsWith("gemini-4-argon")),
+    );
+    const provider = ready(await (await createBinding()).discover());
+    expect(resolveModelTier(ANTIGRAVITY, TIER5, provider.models)?.id).toBe(
       "claude-opus-5-5",
     );
   });
@@ -277,6 +316,17 @@ describe("readQuota", () => {
           name: "Claude and GPT models",
           buckets: [{ id: "3p-daily", window: "daily", remaining_fraction: 1 }],
         },
+        {
+          name: "Gemini 4 Argon",
+          buckets: [
+            {
+              id: "gemini-argon-wtu-weekly",
+              window: "weekly",
+              remaining_fraction: 0.4,
+              reset_time: "2026-10-23T03:50:15Z",
+            },
+          ],
+        },
       ],
     });
     expect(await (await createBinding()).readQuota()).toEqual({
@@ -297,6 +347,12 @@ describe("readQuota", () => {
         {
           scope: { kind: "model", name: "Claude and GPT models" },
           usage: { kind: "percent", usedPercent: 0 },
+        },
+        {
+          scope: { kind: "model", name: "Gemini 4 Argon" },
+          window: { kind: "duration", minutes: 10_080 },
+          usage: { kind: "percent", usedPercent: 60 },
+          resetsAt: "2026-10-23T03:50:15.000Z",
         },
       ],
     });
