@@ -160,8 +160,12 @@ ordinary tool call.
 Discovery reads `antigravity models`, whose rows pair a model with an effort
 (`gemini-3.1-pro-low`). The binding merges them into one model per base ID with
 efforts as variants; the CLI requires an effort, so the binding defaults to
-medium, then high. Quota reads `/usage`, which spends no model tokens: each model
-group's 5-hour and weekly buckets become model-scoped percent meters. Both run
+medium, then high. The tier table maps Gemini Flash → tier 1, Gemini Pro →
+tier 2, Claude Sonnet → tier 3, and Gemini 4 Argon, then Claude Opus → tier 4;
+plans without Argon use Opus, and plans without either fall back downward.
+Quota reads `/usage`, which spends no model tokens: each model group's 5-hour
+and weekly buckets become model-scoped percent meters, including Argon's own
+weekly bucket. Both run
 with a closed stdin, so a signed-out CLI fails at once instead of starting
 sign-in.
 
