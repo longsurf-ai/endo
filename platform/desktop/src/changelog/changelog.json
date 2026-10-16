@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.1.2",
+    "date": "2026-10-15",
+    "items": [
+      "Gemini 4 Argon is available through Antigravity and is its top model choice when your plan includes it.",
+      "New installs open with a Connect your agent window for Claude Code, Codex or Antigravity.",
+      "Antigravity reports a used-up quota right away instead of retrying, and recovers from stalled requests."
+    ]
+  },
+  {
     "version": "0.1.1",
     "date": "2026-10-14",
     "items": [
