@@ -9,7 +9,6 @@ import { ModelsDev } from "@openchart/models/catalog";
 import {
   ANTIGRAVITY,
   TIER4,
-  TIER5,
   resolveModelTier,
 } from "@openchart/models/model-tiers";
 import {
@@ -212,7 +211,7 @@ describe("antigravity.createModelProvider", () => {
         model.availableVariants,
       ]),
     ).toEqual([
-      ["gemini-4-argon", 5, ["low", "medium", "high"]],
+      ["gemini-4-argon", 4, ["low", "medium", "high"]],
       ["claude-opus-5-5", 4, ["low", "medium", "high"]],
       ["claude-sonnet-5-5", 3, ["low"]],
       ["gemini-3.1-pro", 2, ["low", "high"]],
@@ -252,11 +251,8 @@ describe("antigravity.createModelProvider", () => {
       cost: { input: 2, output: 10, cache: { read: 0.1 } },
       limit: { context: 1_048_576, output: 32_768 },
     });
-    expect(resolveModelTier(ANTIGRAVITY, TIER5, provider.models)?.id).toBe(
-      "gemini-4-argon",
-    );
     expect(resolveModelTier(ANTIGRAVITY, TIER4, provider.models)?.id).toBe(
-      "claude-opus-5-5",
+      "gemini-4-argon",
     );
   });
 
@@ -265,7 +261,7 @@ describe("antigravity.createModelProvider", () => {
       ROWS.filter((row) => !row.id.startsWith("gemini-4-argon")),
     );
     const provider = ready(await (await createBinding()).discover());
-    expect(resolveModelTier(ANTIGRAVITY, TIER5, provider.models)?.id).toBe(
+    expect(resolveModelTier(ANTIGRAVITY, TIER4, provider.models)?.id).toBe(
       "claude-opus-5-5",
     );
   });
