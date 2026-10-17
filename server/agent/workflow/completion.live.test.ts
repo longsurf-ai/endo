@@ -2,7 +2,7 @@
 import { randomUUID } from "node:crypto";
 import { symlinkSync } from "node:fs";
 import path from "node:path";
-import { CLAUDE_CODE, CODEX, TIER1 } from "@openchart/models/model-tiers";
+import { CLAUDE_CODE, CODEX, GROK, TIER1 } from "@openchart/models/model-tiers";
 import { AgentRunStore } from "@openchart/server/agent/run/store";
 import { Session } from "@openchart/server/agent/session";
 import { SessionRunner } from "@openchart/server/agent/session/runner";
@@ -16,7 +16,7 @@ import { Effect, FileSystem } from "effect";
 import { expect, test } from "vitest";
 
 const runtimes = process.env.OPENCHART_WORKFLOW_RUNTIME_DIR;
-const cases = [CODEX, CLAUDE_CODE].flatMap((providerID) =>
+const cases = [CODEX, CLAUDE_CODE, GROK].flatMap((providerID) =>
   [false, true].map((priorTurn) => ({ providerID, priorTurn })),
 );
 
@@ -43,6 +43,7 @@ test.runIf(Boolean(runtimes)).each(cases)(
           );
           // Only the completed tool result contains the chosen option. Neither the
           // original user message nor an earlier native Session can supply it.
+          // Replay clips tool output to a preview, so the option precedes the bulk.
           const chosen = `OPTION_${randomUUID()}`;
           const fs = yield* FileSystem.FileSystem;
           yield* fs.writeFileString(
@@ -54,8 +55,8 @@ export default defineWorkflow({
   args: Schema.Struct({ topic: Schema.String, round: Schema.Int }),
   run: (args) => phase("Choose", Effect.succeed({
     ...args,
-    detail: "x".repeat(5000),
     summary: { output: "The chosen option is ${chosen}." },
+    detail: "x".repeat(5000),
   })),
 });
 `,

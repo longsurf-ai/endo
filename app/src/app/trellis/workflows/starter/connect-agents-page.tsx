@@ -3,6 +3,7 @@ import {
   ANTIGRAVITY,
   CLAUDE_CODE,
   CODEX,
+  GROK,
   type NativeProviderID,
 } from "@openchart/models/model-tiers";
 import { Check } from "lucide-react";
@@ -29,7 +30,6 @@ import { NATIVE_PROVIDER_BRANDS } from "@openchart/app/lib/agent/native-provider
 
 const soon: readonly { agent: AgentMarkId; name: string }[] = [
   { agent: "gemini", name: "Gemini" },
-  { agent: "xai", name: "xAI" },
   { agent: "cursor", name: "Cursor" },
   { agent: "githubCopilot", name: "Copilot" },
   { agent: "openCode", name: "OpenCode" },
@@ -75,7 +75,7 @@ function AgentColumn({
 }
 
 /**
- * The starter workflow's first page: Claude Code, Codex and Antigravity connect
+ * The starter workflow's first page: Claude Code, Codex, Antigravity and Grok connect
  * on their own when already signed in, otherwise the user signs in here. Other
  * agents are listed as coming soon. Closing or skipping continues the tour.
  * @example <ConnectAgentsPage transport={transport} onDone={next} />
@@ -84,14 +84,15 @@ export function ConnectAgentsPage({ transport, onDone }: OnboardingPageProps) {
   const claude = useNativeProvider(CLAUDE_CODE, transport);
   const codex = useNativeProvider(CODEX, transport);
   const antigravity = useNativeProvider(ANTIGRAVITY, transport);
+  const grok = useNativeProvider(GROK, transport);
   const moreAgents = useId();
-  const connected = [claude, codex, antigravity].some(
+  const connected = [claude, codex, antigravity, grok].some(
     ({ discovery }) => discovery.data?.status === "ready",
   );
   return (
     <Dialog open onOpenChange={(open) => !open && onDone()}>
       <DialogContent
-        className="gap-8 p-8 sm:max-w-3xl lg:max-w-3xl xl:max-w-3xl"
+        className="gap-8 p-8 sm:max-w-3xl lg:max-w-4xl xl:max-w-4xl"
         onInteractOutside={(event) => event.preventDefault()}
       >
         <div className="space-y-2 text-center">
@@ -103,10 +104,11 @@ export function ConnectAgentsPage({ transport, onDone }: OnboardingPageProps) {
             have.
           </DialogDescription>
         </div>
-        <div className="grid gap-8 sm:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <AgentColumn providerID={CLAUDE_CODE} controls={claude} />
           <AgentColumn providerID={CODEX} controls={codex} />
           <AgentColumn providerID={ANTIGRAVITY} controls={antigravity} />
+          <AgentColumn providerID={GROK} controls={grok} />
         </div>
         <section aria-labelledby={moreAgents} className="space-y-5">
           <h3

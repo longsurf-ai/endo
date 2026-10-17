@@ -1,5 +1,10 @@
 // Purpose: Verifies file-backed Config through real HTTP mutation/query and shared SSE transport.
-import { ANTIGRAVITY, CLAUDE_CODE, CODEX } from "@openchart/models/model-tiers";
+import {
+  ANTIGRAVITY,
+  CLAUDE_CODE,
+  CODEX,
+  GROK,
+} from "@openchart/models/model-tiers";
 
 import { createServer, type AppRouter } from "@openchart/server";
 import type { inferRouterOutputs } from "@trpc/server";
@@ -37,6 +42,7 @@ const nativeDisabled = {
       [CODEX]: { enabled: false },
       [CLAUDE_CODE]: { enabled: false },
       [ANTIGRAVITY]: { enabled: false },
+      [GROK]: { enabled: false },
     },
   },
 };

@@ -1,5 +1,10 @@
 // Purpose: Enforces independent adapters, a provider-agnostic root, and the models package runtime boundary.
-import { ANTIGRAVITY, CLAUDE_CODE, CODEX } from "@openchart/models/model-tiers";
+import {
+  ANTIGRAVITY,
+  CLAUDE_CODE,
+  CODEX,
+  GROK,
+} from "@openchart/models/model-tiers";
 
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
@@ -57,7 +62,7 @@ const SHARED_DEPENDENCIES: readonly string[] = [
 ];
 
 describe("models architecture", () => {
-  it.each([CLAUDE_CODE, CODEX, ANTIGRAVITY])(
+  it.each([CLAUDE_CODE, CODEX, ANTIGRAVITY, GROK])(
     "%s adapter owns its implementation without sibling or model-package dependencies",
     async (adapter) => {
       const directory = path.join(providersDirectory, adapter, "adapter");
@@ -100,7 +105,7 @@ describe("models architecture", () => {
     for (const filename of await productionSources(sourceDirectory, false)) {
       if (path.basename(filename) === "model-tiers.ts") continue;
       if (
-        /\b(?:CLAUDE_CODE|CODEX|ANTIGRAVITY)\b/.test(
+        /\b(?:CLAUDE_CODE|CODEX|ANTIGRAVITY|GROK)\b/.test(
           await fs.readFile(filename, "utf8"),
         )
       )

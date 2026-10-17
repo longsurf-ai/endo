@@ -3,7 +3,12 @@ import { mkdtemp, mkdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { expect, test, vi } from "vitest";
-import { ANTIGRAVITY, CODEX, CLAUDE_CODE } from "@openchart/models/model-tiers";
+import {
+  ANTIGRAVITY,
+  CODEX,
+  CLAUDE_CODE,
+  GROK,
+} from "@openchart/models/model-tiers";
 import { NATIVE_PROVIDERS } from "@openchart/models/providers";
 import { nativeQuery } from "@openchart/models/providers/claude-code/adapter/native-query";
 import { createInstallations } from "./installation";
@@ -21,6 +26,7 @@ test.skipIf(process.env.OPENCHART_VERIFY_PROVIDER_DOWNLOADS !== "1")(
         ["HOME", "home"],
         ["CODEX_HOME", "codex-auth"],
         ["CLAUDE_CONFIG_DIR", "claude-auth"],
+        ["GROK_HOME", "grok-auth"],
       ]) {
         const target = path.join(directory, folder!);
         await mkdir(target);
@@ -28,7 +34,11 @@ test.skipIf(process.env.OPENCHART_VERIFY_PROVIDER_DOWNLOADS !== "1")(
       }
       // Keep developer API keys and access tokens out of the isolated subprocesses.
       for (const key of Object.keys(process.env)) {
-        if (/^(ANTHROPIC_|OPENAI_|CLAUDE_CODE_|CODEX_(?!HOME))/.test(key))
+        if (
+          /^(ANTHROPIC_|OPENAI_|CLAUDE_CODE_|CODEX_(?!HOME)|XAI_|GROK_(?!HOME))/.test(
+            key,
+          )
+        )
           vi.stubEnv(key, undefined);
       }
       const installations = createInstallations(
@@ -42,6 +52,7 @@ test.skipIf(process.env.OPENCHART_VERIFY_PROVIDER_DOWNLOADS !== "1")(
       for (const id of [
         CODEX,
         CLAUDE_CODE,
+        GROK,
         ...(antigravity ? [ANTIGRAVITY] : []),
       ]) {
         await installations.install(
@@ -60,6 +71,10 @@ test.skipIf(process.env.OPENCHART_VERIFY_PROVIDER_DOWNLOADS !== "1")(
         catalog,
         installations.executables[CLAUDE_CODE],
       );
+      const grok = NATIVE_PROVIDERS[GROK].createModelProvider(
+        catalog,
+        installations.executables[GROK],
+      );
       const agy = antigravity
         ? NATIVE_PROVIDERS[ANTIGRAVITY].createModelProvider(
             catalog,
@@ -68,6 +83,7 @@ test.skipIf(process.env.OPENCHART_VERIFY_PROVIDER_DOWNLOADS !== "1")(
         : undefined;
       try {
         expect((await codex.discover()).status).toBe("authentication_required");
+        expect((await grok.discover()).status).toBe("authentication_required");
         if (agy)
           expect((await agy.discover()).status).toBe("authentication_required");
         expect((await claude.discover()).status).toBe(
@@ -96,7 +112,12 @@ test.skipIf(process.env.OPENCHART_VERIFY_PROVIDER_DOWNLOADS !== "1")(
           query.close();
         }
       } finally {
-        await Promise.all([codex.dispose(), claude.dispose(), agy?.dispose()]);
+        await Promise.all([
+          codex.dispose(),
+          claude.dispose(),
+          grok.dispose(),
+          agy?.dispose(),
+        ]);
       }
     } finally {
       vi.unstubAllEnvs();

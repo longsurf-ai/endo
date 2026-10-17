@@ -11,11 +11,17 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
+import { brotliCompressSync } from "node:zlib";
 import path from "node:path";
 import * as tar from "tar";
 import { Effect, Fiber } from "effect";
 import { afterEach, expect, test, vi } from "vitest";
-import { ANTIGRAVITY, CODEX, CLAUDE_CODE } from "@openchart/models/model-tiers";
+import {
+  ANTIGRAVITY,
+  CODEX,
+  CLAUDE_CODE,
+  GROK,
+} from "@openchart/models/model-tiers";
 import { createInstallations, installationTask } from "./installation";
 import type { RuntimeArtifact } from "./manifest";
 
@@ -31,6 +37,8 @@ async function fixture(
     status?: number;
     /** Archive the payload at the root, as release archives do, instead of under `package/`. */
     flat?: boolean;
+    /** Ship the executable only as `bin/codex.br`, as Grok's npm packages do. */
+    brotli?: boolean;
   } = {},
 ) {
   const directory = await mkdtemp(path.join(tmpdir(), "openchart-install-"));
@@ -38,11 +46,14 @@ async function fixture(
   const source = path.join(directory, "source");
   const payload = options.flat ? source : path.join(source, "package");
   await mkdir(path.join(payload, "bin"), { recursive: true });
-  await writeFile(
-    path.join(payload, "bin/codex"),
-    `#!${process.execPath}\nconsole.log("codex-cli ${options.version ?? "1.2.3"}");\n`,
-    { mode: 0o755 },
-  );
+  const script = `#!${process.execPath}\nconsole.log("codex-cli ${options.version ?? "1.2.3"}");\n`;
+  if (options.brotli)
+    await writeFile(
+      path.join(payload, "bin/codex.br"),
+      brotliCompressSync(script),
+    );
+  else
+    await writeFile(path.join(payload, "bin/codex"), script, { mode: 0o755 });
   await writeFile(path.join(payload, "bin/companion"), "companion resource", {
     mode: 0o755,
   });
@@ -78,6 +89,7 @@ async function fixture(
     integrity: `sha512-${createHash("sha512").update(bytes).digest("base64")}`,
     layout: options.flat ? "flat" : "npm",
     executable: "bin/codex",
+    ...(options.brotli && { compression: "brotli" as const }),
   };
   const root = path.join(directory, "model-providers");
   const make = (pin = artifact) =>
@@ -87,6 +99,7 @@ async function fixture(
         [CODEX]: { test: pin },
         [CLAUDE_CODE]: { test: pin },
         [ANTIGRAVITY]: { test: pin },
+        [GROK]: { test: pin },
       },
       "test",
     );
@@ -111,6 +124,19 @@ test("installs a flat release archive at the payload root and rejects it under a
     "unsupported entries",
   );
   expect(await npm.installed(ANTIGRAVITY)).toBe(false);
+});
+
+test("unpacks a Brotli-compressed executable and requires the pin to say so", async () => {
+  const f = await fixture({ brotli: true });
+  const runtime = f.make();
+  await runtime.install(GROK, signal(), () => {});
+  expect(await runtime.installed(GROK)).toBe(true);
+  const bin = path.dirname(runtime.executables[GROK]);
+  expect((await readdir(bin)).sort()).toEqual(["codex", "companion"]);
+
+  const plain = f.make({ ...f.artifact, compression: undefined });
+  await expect(plain.install(CODEX, signal(), () => {})).rejects.toThrow();
+  expect(await plain.installed(CODEX)).toBe(false);
 });
 
 test("installs a missing provider once and treats a changed manifest as a new target", async () => {

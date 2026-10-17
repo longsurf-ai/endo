@@ -9,9 +9,16 @@ export const CODEX = "codex" as const;
 export const CLAUDE_CODE = "claude-code" as const;
 /** Antigravity CLI provider identity. */
 export const ANTIGRAVITY = "antigravity" as const;
+/** Grok CLI provider identity. */
+export const GROK = "grok" as const;
 
 /** Providers accepted by product prompts and model selectors. */
-export const MODEL_PROVIDER_IDS = [CODEX, CLAUDE_CODE, ANTIGRAVITY] as const;
+export const MODEL_PROVIDER_IDS = [
+  CODEX,
+  CLAUDE_CODE,
+  ANTIGRAVITY,
+  GROK,
+] as const;
 
 /** Supported native provider identity, independent of enablement and discovery. */
 export type NativeProviderID = (typeof MODEL_PROVIDER_IDS)[number];

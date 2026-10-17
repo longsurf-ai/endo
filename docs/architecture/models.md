@@ -26,7 +26,7 @@ provider disposal clears the hints.
 
 All adapters share `providers/continuation.ts`: a bounded map from the SHA-256 of the
 prompt that completed a turn, plus the tool set, to the native ID (a Codex
-thread, a Claude session, an Antigravity conversation). A hit requires the new prompt to be exactly that
+thread, a Claude session, an Antigravity conversation, a Grok session). A hit requires the new prompt to be exactly that
 prompt followed by one assistant segment and one new user message; the native
 conversation then receives only the new message. Hits are consumed exclusively,
 so concurrent branches cannot mutate one native conversation. Claude checks
@@ -35,8 +35,8 @@ failure after the turn starts is propagated without automatic replay.
 
 Anything else starts fresh. Codex injects the prior history as Responses API
 items through `thread/inject_items`, so edits, forks, provider switches and
-compaction keep tool-call fidelity. Claude's SDK and the Antigravity CLI accept
-only user input, so a fresh session receives the transcript as text in its first
+compaction keep tool-call fidelity. Claude's SDK, the Antigravity CLI and Grok's
+ACP sessions accept only user input, so a fresh session receives the transcript as text in its first
 user message.
 Local continuation hints do not guarantee provider-side KV cache retention.
 
@@ -48,7 +48,7 @@ do not retain continuation hints under an incomplete user prefix. Claude's text
 replay preserves complete tool arguments and results; context reduction belongs
 to the application, not a silent per-value adapter truncation.
 
-`providers/<id>/adapter/` (`claude-code`, `codex`, `antigravity`) each own their
+`providers/<id>/adapter/` (`claude-code`, `codex`, `antigravity`, `grok`) each own their
 native protocol, request execution, tool transport, and stream translation. No
 adapter imports another; each imports only the shared protocol schema
 (`provider-protocol.ts`), `providers/continuation.ts`, `providers/generate.ts`, and
@@ -67,7 +67,8 @@ adapter emits the exact outcome as the tool result, marked
 `toolExecution: "provider-mcp"`; no middleware restores anything afterwards.
 Claude raises the CLI's MCP client deadline to two hours through
 `MCP_TOOL_TIMEOUT` and Antigravity through its relay entry's `timeoutSeconds`;
-Codex dynamic tools have no server-side deadline. OpenChart
+Codex dynamic tools have no server-side deadline; Grok's MCP client allows a
+tool call 6,000 seconds. OpenChart
 owns timeout policy and cancellation for its own tools.
 
 Working public capabilities, including active-call controls, callbacks, images,
@@ -119,11 +120,12 @@ Each adapter's test file drives it through the real AI SDK stream and canonical
 conformer against a scripted native source: Codex's `codex.test.ts` uses an
 in-memory app-server, Claude's `claude-code.test.ts` a scripted SDK query, and
 Antigravity's `antigravity.test.ts` a scripted fake CLI that reaches host tools
-through the real relay. They cover text and reasoning, native and host tools,
+through the real relay, and Grok's `grok.test.ts` a scripted fake ACP agent that
+reaches host tools over the real HTTP MCP server. They cover text and reasoning, native and host tools,
 media, nested subagents, continuation hits and misses, cancellation, failures and
 structured output where the native surface has them. The `*.live.test.ts` files
 repeat the key scenarios against the real, signed-in CLIs when `CODEX_LIVE`,
-`CLAUDE_LIVE` or `ANTIGRAVITY_LIVE` names an executable.
+`CLAUDE_LIVE`, `ANTIGRAVITY_LIVE` or `GROK_LIVE` names an executable.
 
 ## Antigravity
 
@@ -180,10 +182,64 @@ code within 60 seconds, and the CLI stores its token in the macOS Keychain (or
 under `~/.gemini/antigravity-cli/`). Windows has no pin: its archives are zip
 files and it has no `script`.
 
+## Grok
+
+Grok runs through the Grok CLI's agent mode, `grok agent --no-leader stdio`,
+which speaks the [Agent Client Protocol](https://agentclientprotocol.com)
+(ACP) over JSON-RPC and signs in with a SuperGrok or X Premium account. Each
+call owns one agent process and one prompt turn; startup takes a fraction of a
+second. The adapter sends `initialize`, starts or resumes a session, selects the
+model and effort with `session/set_config_option`, and translates
+`session/update` notifications until `session/prompt` returns. Abort sends
+`session/cancel`; the prompt returns `cancelled` and the stream finishes as
+interrupted. Input is text only.
+
+An append-only prompt resumes its remembered session with `session/resume`,
+which replays nothing; a failed resume falls back to a fresh session before any
+input is committed. A fresh session receives the system instructions as session
+rules (`_meta.rules`) and the transcript as text. When it starts from a replay,
+the rules also say that the replayed turns happened: Grok otherwise treats
+pasted tool results as unverified and re-checks them with its own tools. Grok
+runs a leading `/word` as a slash command, so every prompt starts with an empty
+text block, which keeps the text literal. xAI's prompt cache follows the
+session: a fresh session reads little from cache, while a resumed one reads
+nearly its whole prefix. Usage comes from the prompt result; its input includes
+cache reads, its output includes reasoning, and both include the turn's
+subagents.
+
+OpenChart tools reach Grok through the session's `mcpServers`: each request
+serves its tools as a loopback HTTP MCP server guarded by a random bearer
+token, so nothing is written to Grok's configuration. Grok exposes MCP tools
+through `search_tool` and `use_tool` under `openchart__<tool>` catalog keys,
+which the rules name. Both steps are hidden plumbing; the host server reports
+each call with its exact outcome. Grok truncates MCP results over 20,000 bytes
+into a file the model can read.
+
+Native tools, including the backend X search (`x_search`, whose result names
+the `x_keyword_search`, `x_semantic_search`, `x_user_search` or
+`x_thread_fetch` call), are provider-executed calls. A foreground
+`spawn_subagent` call opens a delegate. Grok streams the child as its own ACP
+session: `subagent_spawned` (an `_x.ai/session_notification`) binds it to the
+parent's unbound spawn with the same description, and `subagent_finished` seals
+it before the parent's proxy result. Background subagents stay ordinary tool
+calls whose sessions are not shown. Structured output sends the JSON schema as
+`session/prompt` `_meta.outputSchema` and emits only `_meta.structuredOutput`.
+
+Discovery and quota send `_x.ai` extension requests to an agent that never
+creates a session: `auth/check_subscription` establishes sign-in, `models/list`
+lists models with their reasoning efforts as variants, and `billing` reports
+plan usage. Sign-in runs `grok login --device-auth`, which prints a URL and a
+code and needs no terminal. The tier table maps Grok 4.5 → tier 1, 4.6 → tier 2
+and 4.7 → tier 3; Grok 4.7 Fast stays unclassified. Grok imports Claude Code and
+Cursor skills, rules, agents, hooks and MCP servers by default; the binding
+turns those imports off (`GROK_CLAUDE_*_ENABLED=0`, `GROK_CURSOR_*_ENABLED=0`)
+because Endo runs those agents itself. Plugins installed for Claude Code under
+`~/.claude/plugins` have no such switch and still load.
+
 ## Model references and shared constants
 
 [`model-tiers.ts`](../../common/models/src/model-tiers.ts) owns OpenChart's
-`CODEX`, `CLAUDE_CODE`, `ANTIGRAVITY`, `TIER1` through `TIER5`, and tier classification;
+`CODEX`, `CLAUDE_CODE`, `ANTIGRAVITY`, `GROK`, `TIER1` through `TIER5`, and tier classification;
 each provider's native mapping lives in `providers/<id>/tiers.ts`.
 OpenChart bindings and consumers import these constants;
 independent provider adapters keep their native identity strings locally.
@@ -191,7 +247,7 @@ Each provider maps a tier to one flat, ordered array of native aliases/versions.
 Discovery establishes availability; this table never manufactures available models.
 
 Product prompts, schedules, defaults, and profile selections accept only
-`codex`, `claude-code` or `antigravity` plus `tier1` through `tier5`. `AgentPromptModel` derives
+`codex`, `claude-code`, `antigravity` or `grok` plus `tier1` through `tier5`. `AgentPromptModel` derives
 these literal fields from the shared `MODEL_PROVIDER_IDS` and `MODEL_TIER_IDS`.
 Unknown providers and native model IDs fail boundary parsing before admission.
 The provider registry uses the same native provider list by default.
@@ -221,14 +277,15 @@ Schema, shared by the public Config API and the native ConfigProvider recipe:
     "providers": {
       "codex": { "enabled": true },
       "claude-code": { "enabled": true },
-      "antigravity": { "enabled": true }
+      "antigravity": { "enabled": true },
+      "grok": { "enabled": true }
     },
     "defaultModel": { "providerID": "codex", "modelID": "tier1" }
   }
 }
 ```
 
-Codex, Claude Code and Antigravity are the registered model providers and default
+Codex, Claude Code, Antigravity and Grok are the registered model providers and default
 to enabled. Settings inspects each even when disabled. Enablement controls model selection and
 inference, not inspection. CLI accounts and credentials remain owned by the native
 provider; there is no model API endpoint or API-key configuration.
@@ -258,6 +315,13 @@ Antigravity's headless mode cannot ask: `full-access` passes
 user has not pre-approved in the CLI's own settings, without an AI reviewer. The
 CLI ends the turn at the first denial; the adapter reports it as an error that
 names the denied actions.
+
+Grok maps `ask` to its default mode, `auto` to `_meta.autoMode` and
+`full-access` to `_meta.yoloMode` on the session. In the first two, Grok
+approves routine workspace reads and edits itself (in `auto`, its classifier
+approves more) and sends `session/request_permission` for the rest; the binding
+asks the host, and the adapter answers with the `allow_once` or `reject_once`
+option. OpenChart's own MCP tools are pre-approved.
 
 Codex sends policy on thread creation and every turn, so the turn's cwd owns
 the writable workspace. Claude enables sandboxed Bash auto-allow in `ask` and
@@ -335,8 +399,11 @@ Native model discovery -> catalog enrichment -> tiers -> ready
 The app ships adapter/SDK JavaScript and downloads missing native artifacts in the
 background at startup. `manifest.ts` pins official archive URLs, SHA-512
 integrity, archive layout, exact versions and executable paths per OS/architecture.
-npm hosts the Codex and Claude tarballs (payload under `package/`); GitHub releases
-host Antigravity's flat tarballs. Hosts are only artifact sources: no npm
+npm hosts the Codex, Claude and Grok tarballs (payload under `package/`); GitHub releases
+host Antigravity's flat tarballs. Grok's platform packages ship the CLI
+Brotli-compressed at `<executable>.br` for their postinstall script; the pin's
+`compression: "brotli"` makes installation decompress it, within a size limit,
+before the version check. Hosts are only artifact sources: no npm
 executable, global installation or native updater runs.
 Claude Agent SDK 0.3.284 is paired with Claude Code 2.1.284; Codex is 0.159.0 and
 includes its app-server subcommand and companion resources. Desktop staging omits
@@ -356,8 +423,9 @@ missing target downloads automatically on first launch or after a manifest chang
 Failure remains visible with an Install retry action; app startup does not wait for
 network. Restart retries an unfinished download.
 Bindings receive fixed absolute paths and never search PATH, Claude Desktop, Codex
-Desktop or ChatGPT. Claude self-update, Codex startup update checks and Antigravity
-self-update (`AGY_CLI_DISABLE_AUTO_UPDATE=true`) are disabled.
+Desktop or ChatGPT. Claude self-update, Codex startup update checks, Antigravity
+self-update (`AGY_CLI_DISABLE_AUTO_UPDATE=true`) and Grok self-update
+(`GROK_DISABLE_AUTOUPDATER=1`) are disabled.
 
 Settings sends only provider ID and `install`/`login` to `models.startSetup`. The server
 validates the action, returns an accepted job, and runs it within the model scope.
@@ -646,6 +714,7 @@ Settings provider row (ready) -- every visit --> models.quota({providerID})
          Claude Code: SDK usage control request -> binding translation
          Codex: account/rateLimits/read         -> binding translation
          Antigravity: `-p /usage` JSON          -> binding translation
+         Grok: ACP `_x.ai/billing`              -> binding translation
   <- ProviderQuota, parsed once at the binding boundary
   -> one UsageRing per meter; hover shows label, percent, spend and reset
 ```
@@ -655,7 +724,10 @@ enablement, and never installs, starts login or changes native settings. Adapter
 return native shapes; bindings translate them, keeping native field names out of
 the contract. Claude Code runs the SDK's experimental `usage` control request on
 a query that never sends a message, the same way discovery reads models; Codex
-reads every `rateLimitsByLimitId` bucket; Antigravity runs its `/usage` command.
+reads every `rateLimitsByLimitId` bucket; Antigravity runs its `/usage` command;
+Grok asks an agent that never creates a session for `_x.ai/billing`, whose credit
+use for the current period becomes one account meter (API-key accounts are
+`not_applicable`).
 All normalize reset instants to `Z`;
 Claude Code scales minor-unit extra-usage spend to major units. Quota is
 read-only account state: it never
@@ -689,6 +761,10 @@ inputs to `ProviderQuestionRequest` and translate `answered` / `skipped` replies
   response explaining that no answers were provided. The SDK emits the transcript.
 
 - Antigravity: headless turns cannot ask; native questions go unanswered.
+- Grok: `_x.ai/ask_user_question` requests carry the tool's questions. Answers
+  return as `{outcome: "accepted", answers}` keyed by question text, with
+  multi-select labels joined by `, `; skipping or no host returns
+  `{outcome: "skip_interview"}`.
 
-Codex and Claude share the LLM callback scope and cancellation bridge. Title/compaction calls
+Codex, Claude and Grok share the LLM callback scope and cancellation bridge. Title/compaction calls
 without a question capability decline rather than opening an unowned UI wait.

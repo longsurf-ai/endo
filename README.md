@@ -34,7 +34,7 @@ history. Endo is a **Higher Order Harness (HOH)**. It takes agents as its
 building blocks, the way a higher-order function takes functions, and composes
 them freely:
 
-- **In one session**, switch between Codex, Claude Code and Antigravity
+- **In one session**, switch between Codex, Claude Code, Antigravity and Grok
   mid-thread, or Dig In on any answer. Each agent picks up the full history.
 - **Across sessions**, a workflow fans work out to agents from different
   vendors and continues any of their sessions, and a schedule runs the whole
@@ -61,15 +61,15 @@ just install --frozen-lockfile
 just desktop
 ```
 
-Sign in to at least one provider (an existing `codex`, `claude` or Antigravity
-login works, or use Settings → Models), then ask something like "Every weekday
+Sign in to at least one provider (an existing `codex`, `claude`, Antigravity or
+`grok` login works, or use Settings → Models), then ask something like "Every weekday
 at 9 AM, summarize my priorities for the day" and open the Schedule page.
 
 ## Key features
 
 ### Any agent, one protocol, your subscription
 
-Endo drives Codex, Claude Code and Antigravity natively through their own CLIs,
+Endo drives Codex, Claude Code, Antigravity and Grok natively through their own CLIs,
 signed in with the accounts you already have. There are no API keys to paste,
 and Settings → Models shows each provider's plan usage. Every provider streams
 through one protocol into one harness, so answers, tool calls, permission

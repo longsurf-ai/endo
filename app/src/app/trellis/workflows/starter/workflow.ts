@@ -5,7 +5,7 @@ import { PageView } from "@openchart/app/app/trellis/views";
 import type { OnboardingWorkflow } from "@openchart/app/app/trellis/workflows";
 
 /**
- * The first-launch workflow connects Claude Code, Codex or Antigravity through
+ * The first-launch workflow connects Claude Code, Codex, Antigravity or Grok through
  * the existing provider setup. Continuing or skipping finishes onboarding.
  * Desktop queues it only before a new profile's database is created.
  * @example starterWorkflow.steps[0].view;

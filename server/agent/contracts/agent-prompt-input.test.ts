@@ -73,7 +73,7 @@ describe("AgentPromptInput", () => {
 
   it("derives closed provider and tier types from the prompt schema", () => {
     expectTypeOf<AgentPromptModel["providerID"]>().toEqualTypeOf<
-      "codex" | "claude-code" | "antigravity"
+      "codex" | "claude-code" | "antigravity" | "grok"
     >();
     expectTypeOf<AgentPromptModel["modelID"]>().toEqualTypeOf<
       "tier1" | "tier2" | "tier3" | "tier4" | "tier5"

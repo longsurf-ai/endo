@@ -477,7 +477,7 @@ try {
 
   const onboarding = page.getByRole("dialog", { name: "Connect your agent" });
   await expect(onboarding).toBeVisible();
-  for (const name of ["Codex", "Claude Code", "Antigravity"])
+  for (const name of ["Codex", "Claude Code", "Antigravity", "Grok"])
     await expect(
       onboarding.getByRole("region", { name, exact: true }),
     ).toBeVisible();
