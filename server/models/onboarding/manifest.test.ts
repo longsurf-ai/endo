@@ -4,7 +4,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { expect, test } from "vitest";
 import { Schema } from "effect";
-import { ANTIGRAVITY, CLAUDE_CODE } from "@openchart/models/model-tiers";
+import { ANTIGRAVITY, CLAUDE_CODE, GROK } from "@openchart/models/model-tiers";
 import { PROVIDER_MANIFEST } from "./manifest";
 
 const Package = Schema.Struct({
@@ -64,5 +64,20 @@ test("every Antigravity pin is one flat GitHub release", () => {
         `^https://github\\.com/google-antigravity/antigravity-cli/releases/download/${version!.replaceAll(".", "\\.")}/agy_cli_[a-z0-9_]+\\.tar\\.gz$`,
       ),
     );
+  }
+});
+
+test("every Grok pin is one official npm platform package with a Brotli-compressed CLI", () => {
+  const pins = Object.entries(PROVIDER_MANIFEST[GROK]);
+  const versions = new Set(pins.map(([, pin]) => pin.version));
+  expect(versions.size).toBe(1);
+  const [version] = versions;
+  for (const [platform, pin] of pins) {
+    expect(pin).toMatchObject({
+      layout: "npm",
+      compression: "brotli",
+      executable: platform.startsWith("win32-") ? "bin/grok.exe" : "bin/grok",
+      url: `https://registry.npmjs.org/@xai-official/grok-${platform}/-/grok-${platform}-${version}.tgz`,
+    });
   }
 });

@@ -15,7 +15,7 @@ just desktop
 Run commands from the repository root. `just desktop` builds the Electron host
 and backend, starts Vite for live renderer updates, and opens
 `Endo Development` with a profile under `platform/desktop/.artifacts/dev-profile`.
-On first start the app installs pinned Codex, Claude Code and Antigravity CLIs
+On first start the app installs pinned Codex, Claude Code, Antigravity and Grok CLIs
 into that profile in the background; each uses your existing login for that CLI
 (`codex login`, `claude login`, …), or sign in from Settings → Models.
 

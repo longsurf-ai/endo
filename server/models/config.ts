@@ -3,6 +3,7 @@ import {
   ANTIGRAVITY,
   CLAUDE_CODE,
   CODEX,
+  GROK,
   MODEL_PROVIDER_IDS,
 } from "@openchart/models/model-tiers";
 import { PROVIDER_PERMISSION_MODES } from "@openchart/models/provider-permission";
@@ -32,6 +33,9 @@ export const ModelsSettings = Schema.Struct({
       Schema.withDecodingDefaultKey(Effect.succeed({})),
     ),
     [ANTIGRAVITY]: NativeProviderSettings.pipe(
+      Schema.withDecodingDefaultKey(Effect.succeed({})),
+    ),
+    [GROK]: NativeProviderSettings.pipe(
       Schema.withDecodingDefaultKey(Effect.succeed({})),
     ),
   }).pipe(Schema.withDecodingDefaultKey(Effect.succeed({}))),

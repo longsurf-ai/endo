@@ -61,8 +61,8 @@ child and shows the startup error. Model runtimes install in the background
 Before starting the backend, desktop checks whether `openchart.sqlite3` exists.
 A new profile queues the `starter` onboarding workflow through
 `initialLocalStorage`. The renderer fills only absent browser keys before
-importing the app. The copied OpenChart modal connects Claude Code, Codex or
-Antigravity; continuing, skipping or closing completes Endo's one-step flow.
+importing the app. The copied OpenChart modal connects Claude Code, Codex,
+Antigravity or Grok; continuing, skipping or closing completes Endo's one-step flow.
 Progress persists in `local:onboarding`. Existing profiles are not offered it.
 
 App identity: release builds are named `Endo` (home `~/.endo`),

@@ -3,6 +3,7 @@ import {
   ANTIGRAVITY,
   CLAUDE_CODE,
   CODEX,
+  GROK,
   type NativeProviderID,
 } from "@openchart/models/model-tiers";
 import type { ComponentType } from "react";
@@ -12,12 +13,18 @@ import {
   type LogoProps,
 } from "@openchart/app/components/ui/model-selector/logos";
 import { AntigravityLogo } from "@openchart/app/components/ui/brand/antigravity-logo";
+import { AgentMark } from "@openchart/app/components/ui/brand/agent-marks";
 
 /** A provider's display identity; `agent` names it in prose such as "Analyze with Claude". */
 export interface NativeProviderBrand {
   readonly name: string;
   readonly agent: string;
   readonly Logo: ComponentType<LogoProps>;
+}
+
+/** Grok wears xAI's mark in the surrounding text color. @example <GrokLogo className="size-4" /> */
+function GrokLogo(props: LogoProps) {
+  return <AgentMark agent="xai" {...props} />;
 }
 
 /**
@@ -36,6 +43,7 @@ export const NATIVE_PROVIDER_BRANDS: Readonly<
     agent: "Antigravity",
     Logo: AntigravityLogo,
   },
+  [GROK]: { name: "Grok", agent: "Grok", Logo: GrokLogo },
 };
 
 /**

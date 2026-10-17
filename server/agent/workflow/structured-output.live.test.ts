@@ -2,7 +2,7 @@
 
 import { symlinkSync } from "node:fs";
 import path from "node:path";
-import { CODEX, CLAUDE_CODE, TIER1 } from "@openchart/models/model-tiers";
+import { CODEX, CLAUDE_CODE, GROK, TIER1 } from "@openchart/models/model-tiers";
 import { AgentRunStore } from "@openchart/server/agent/run/store";
 import { Session } from "@openchart/server/agent/session";
 import { SessionRunner } from "@openchart/server/agent/session/runner";
@@ -18,7 +18,7 @@ import { expect, test } from "vitest";
 // Use an existing app-managed runtime directory; default checks make no model calls.
 const runtimes = process.env.OPENCHART_WORKFLOW_RUNTIME_DIR;
 
-test.runIf(Boolean(runtimes)).each([CODEX, CLAUDE_CODE])(
+test.runIf(Boolean(runtimes)).each([CODEX, CLAUDE_CODE, GROK])(
   "%s tier 1 drives a structured loop and reads its automatically referenced transcript",
   async (providerID) => {
     assertExists(runtimes, "Opt-in smoke requires installed native runtimes");
@@ -48,15 +48,15 @@ export default defineWorkflow({
   args: Schema.Struct({}),
   run: (_, {parentPrompt}) => Effect.gen(function* () {
     const Review = Schema.Struct({round: Schema.FiniteFromString, passed: Schema.Boolean});
-    let result;
-    let calls = 0;
-    for (let round = 1; round <= 3; round++) {
-      result = yield* phase("Round " + round, agent(textPrompt(
-        "Return round as the string containing " + round + " and passed=" + (round >= 2) + ". This is a format test; use no tools.",
-        parentPrompt.model, parentPrompt.agent,
-      ), {schema: Review, sessionId: result?.sessionId}));
+    const review = (round: number, sessionId?: string) => phase("Round " + round, agent(textPrompt(
+      "Return round as the string containing " + round + " and passed=" + (round >= 2) + ". This is a format test; use no tools.",
+      parentPrompt.model, parentPrompt.agent,
+    ), {schema: Review, sessionId}));
+    let result = yield* review(1);
+    let calls = 1;
+    for (let round = 2; round <= 3 && !result.output.passed; round++) {
+      result = yield* review(round, result.sessionId);
       calls++;
-      if (result.output.passed) break;
     }
     const final = yield* phase("Text continuation", agent(textPrompt(
       "Now reply with only the plain text STRUCTURED_OK. Use no tools.",

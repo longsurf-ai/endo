@@ -1,5 +1,10 @@
 // Purpose: Verify the first onboarding page shows signed-in agents as connected, offers sign-in otherwise, and always lets the user move on.
-import { ANTIGRAVITY, CLAUDE_CODE, CODEX } from "@openchart/models/model-tiers";
+import {
+  ANTIGRAVITY,
+  CLAUDE_CODE,
+  CODEX,
+  GROK,
+} from "@openchart/models/model-tiers";
 import type { ProviderDiscoveryResult } from "@openchart/models/model-provider";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, within } from "@testing-library/react";
@@ -62,9 +67,10 @@ test("signed-in agents connect on their own and Continue starts the tour", async
     [CLAUDE_CODE]: ready(CLAUDE_CODE),
     [CODEX]: ready(CODEX),
     [ANTIGRAVITY]: ready(ANTIGRAVITY),
+    [GROK]: ready(GROK),
   });
 
-  for (const name of ["Claude Code", "Codex", "Antigravity"])
+  for (const name of ["Claude Code", "Codex", "Antigravity", "Grok"])
     expect(
       await within(screen.getByRole("region", { name })).findByText(
         "Connected",
@@ -85,6 +91,7 @@ test("a signed-out agent asks to sign in, other agents are not yet available, an
     },
     [CODEX]: { status: "not_installed" },
     [ANTIGRAVITY]: { status: "not_installed" },
+    [GROK]: { status: "not_installed" },
   });
   const claude = screen.getByRole("region", { name: "Claude Code" });
   const signingIn = {
@@ -106,7 +113,7 @@ test("a signed-out agent asks to sign in, other agents are not yet available, an
   expect(
     await within(claude).findByText(/Complete sign-in in your browser/),
   ).toBeInTheDocument();
-  for (const name of ["Codex", "Antigravity"])
+  for (const name of ["Codex", "Antigravity", "Grok"])
     expect(
       within(screen.getByRole("region", { name })).getByRole("button", {
         name: "Install",

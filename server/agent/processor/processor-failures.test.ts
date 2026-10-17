@@ -1,7 +1,12 @@
 // Purpose: Verifies processor retries, cancellation, and failure cleanup through real persistence.
 
 import { APICallError } from "@ai-sdk/provider";
-import { ANTIGRAVITY, CLAUDE_CODE, CODEX } from "@openchart/models/model-tiers";
+import {
+  ANTIGRAVITY,
+  CLAUDE_CODE,
+  CODEX,
+  GROK,
+} from "@openchart/models/model-tiers";
 import { StoreNotFound } from "@openchart/server/agent/errors";
 import { RequestFailed } from "@openchart/server/agent/llm/errors";
 import { CorrectedError } from "@openchart/server/agent/permission/errors";
@@ -49,7 +54,7 @@ const blockedTool = {
 
 describe("processor failure lifecycle", () => {
   test.each(
-    [CODEX, CLAUDE_CODE, ANTIGRAVITY].flatMap((providerID) =>
+    [CODEX, CLAUDE_CODE, ANTIGRAVITY, GROK].flatMap((providerID) =>
       ["completed", "failed", "stop"].map((outcome) => ({
         providerID,
         outcome,

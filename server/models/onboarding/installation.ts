@@ -1,7 +1,7 @@
 // Purpose: Downloads, verifies, and atomically installs app-pinned native runtimes.
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
-import { createWriteStream } from "node:fs";
+import { createReadStream, createWriteStream } from "node:fs";
 import {
   access,
   chmod,
@@ -16,6 +16,7 @@ import path from "node:path";
 import { Readable, Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { promisify } from "node:util";
+import { createBrotliDecompress } from "node:zlib";
 import { Effect } from "effect";
 import * as tar from "tar";
 import type { NativeProviderID } from "@openchart/models/model-tiers";
@@ -38,6 +39,33 @@ async function exists(filename: string) {
       return false;
     throw cause;
   }
+}
+
+/** Largest executable a compressed pin may unpack to. */
+const UNPACKED_LIMIT = 2 * 1024 * 1024 * 1024;
+
+/** Unpacks a Brotli-compressed executable within the size limit, then removes the source. */
+async function decompress(source: string, target: string, signal: AbortSignal) {
+  if (!(await stat(source)).isFile())
+    throw new Error("Provider executable is missing from the archive.");
+  let unpacked = 0;
+  await pipeline(
+    createReadStream(source),
+    createBrotliDecompress(),
+    new Transform({
+      transform(chunk: Buffer, _encoding, callback) {
+        unpacked += chunk.length;
+        if (unpacked > UNPACKED_LIMIT)
+          return callback(
+            new Error("Provider executable exceeds the unpacked size limit."),
+          );
+        callback(null, chunk);
+      },
+    }),
+    createWriteStream(target, { flags: "wx" }),
+    { signal },
+  );
+  await rm(source);
 }
 
 /**
@@ -168,6 +196,10 @@ export function createInstallations<Id extends string = NativeProviderID>(
       });
       signal.throwIfAborted();
       const binary = path.join(payload, artifact.executable);
+      if (artifact.compression === "brotli") {
+        report("Unpacking provider…");
+        await decompress(`${binary}.br`, binary, signal);
+      }
       if (!(await stat(binary)).isFile())
         throw new Error("Provider executable is missing from the archive.");
       await chmod(binary, 0o755);
@@ -179,6 +211,7 @@ export function createInstallations<Id extends string = NativeProviderID>(
           ...process.env,
           DISABLE_AUTOUPDATER: "1",
           AGY_CLI_DISABLE_AUTO_UPDATE: "true",
+          GROK_DISABLE_AUTOUPDATER: "1",
         },
       });
       // CLIs prefix or suffix their version ("codex-cli 1.2.3", "uv 0.12.0 (…)").

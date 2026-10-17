@@ -14,6 +14,12 @@ export interface RuntimeArtifact {
   readonly layout: "npm" | "flat";
   /** Path of the CLI inside the installed payload. */
   readonly executable: string;
+  /**
+   * Set when the archive ships the CLI compressed at `<executable>.br`, as
+   * Grok's npm packages do for their postinstall script. Installation
+   * decompresses it to `executable` and removes the compressed copy.
+   */
+  readonly compression?: "brotli";
 }
 /** App-pinned archives per runtime id and `<platform>-<arch>`. */
 export type RuntimeManifest<Id extends string> = Readonly<
@@ -22,7 +28,8 @@ export type RuntimeManifest<Id extends string> = Readonly<
 /**
  * Platform-specific pins. Update Claude SDK dependencies together with its artifacts.
  * Antigravity publishes GitHub release archives; Windows ships zip archives and
- * sign-in needs a POSIX pseudo-terminal, so it has no Windows pin.
+ * sign-in needs a POSIX pseudo-terminal, so it has no Windows pin. Grok's npm
+ * platform packages ship the CLI Brotli-compressed.
  */
 export const PROVIDER_MANIFEST: RuntimeManifest<NativeProviderID> = {
   codex: {
@@ -157,6 +164,62 @@ export const PROVIDER_MANIFEST: RuntimeManifest<NativeProviderID> = {
         "sha512-5q1tme9luYqSv2VA8OXaGGs8i/3pc3Qjy3g6TwXvV+rby/AuXa+l3mKVJHhU5KK9rEerYebX3YXbXrLY28DqOQ==",
       layout: "flat",
       executable: "antigravity",
+    },
+  },
+  grok: {
+    "darwin-arm64": {
+      version: "1.0.62",
+      url: "https://registry.npmjs.org/@xai-official/grok-darwin-arm64/-/grok-darwin-arm64-1.0.62.tgz",
+      integrity:
+        "sha512-RSfT2HoNR9lN7ji6lR2HC9Sz0DJLKTCPRXGtQFL4XDmZU+SFLZ8DzKKbqIfS+odHVQ2FnSLaBGud8Os8ghYpdA==",
+      layout: "npm",
+      executable: "bin/grok",
+      compression: "brotli",
+    },
+    "darwin-x64": {
+      version: "1.0.62",
+      url: "https://registry.npmjs.org/@xai-official/grok-darwin-x64/-/grok-darwin-x64-1.0.62.tgz",
+      integrity:
+        "sha512-RrzCeHkEFkC7DhU2hTuMe3jKMaLqfFLaGAhUyVPvFOrdEJAehk20VF5M9VLISKVUQrQTO82gwqd/ib83Da+wtg==",
+      layout: "npm",
+      executable: "bin/grok",
+      compression: "brotli",
+    },
+    "linux-arm64": {
+      version: "1.0.62",
+      url: "https://registry.npmjs.org/@xai-official/grok-linux-arm64/-/grok-linux-arm64-1.0.62.tgz",
+      integrity:
+        "sha512-IyxJjZzL8joNPLw/qx9TN4zoSA0vgXIZbOLptadLrP3lOrUV5TzpYT/EwhM9GhHxQGmovrm9oJFbuB+WYeTujQ==",
+      layout: "npm",
+      executable: "bin/grok",
+      compression: "brotli",
+    },
+    "linux-x64": {
+      version: "1.0.62",
+      url: "https://registry.npmjs.org/@xai-official/grok-linux-x64/-/grok-linux-x64-1.0.62.tgz",
+      integrity:
+        "sha512-MsqDUf0rryWKchpO7TBFY/npVTKiBF/4zarOXzBOqd0YVpnSs9P0tZmZdXQ0o95s9e4FTvpy/CgUbuOsiqkyVA==",
+      layout: "npm",
+      executable: "bin/grok",
+      compression: "brotli",
+    },
+    "win32-arm64": {
+      version: "1.0.62",
+      url: "https://registry.npmjs.org/@xai-official/grok-win32-arm64/-/grok-win32-arm64-1.0.62.tgz",
+      integrity:
+        "sha512-X9lRub7ybnGGvtWd5FKO8z8YCQ4SrNRpFrjY2IwcVgbIguVr1VVeLskWwpvASC5cTe7NfMHAMlq8JIQ/NbuZig==",
+      layout: "npm",
+      executable: "bin/grok.exe",
+      compression: "brotli",
+    },
+    "win32-x64": {
+      version: "1.0.62",
+      url: "https://registry.npmjs.org/@xai-official/grok-win32-x64/-/grok-win32-x64-1.0.62.tgz",
+      integrity:
+        "sha512-y03RgVwg13rjXPTPVroDmAKP9H+gJK+2MC8xJgNKRw9aV3wS4eEMqWH3kUyxyBw93zlAPvDWCgSNmDg1j1d2Yw==",
+      layout: "npm",
+      executable: "bin/grok.exe",
+      compression: "brotli",
     },
   },
 };
