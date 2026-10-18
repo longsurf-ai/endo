@@ -1,14 +1,14 @@
-// Purpose: Derive model menu visibility and resolve supported tier selections.
+// Purpose: Derive model menu visibility and resolve tier or explicit model selections.
 import { MODEL_TIER_IDS } from "@openchart/models/model-tiers";
 import type {
   AgentClient,
   ModelSelection,
 } from "@openchart/app/lib/agent/client";
 
-/** Offer tiers actually present while retaining fallback choices for saved selections. @example const options = models.filter(isModelMenuOption); */
+/** Offer explicit models and tiers actually present; retain hidden fallbacks for saved selections. @example const options = models.filter(isModelMenuOption); */
 export function isModelMenuOption(model: { id: string; tier?: number }) {
   return (
-    model.tier !== undefined && MODEL_TIER_IDS[model.tier - 1] === model.id
+    model.tier === undefined || MODEL_TIER_IDS[model.tier - 1] === model.id
   );
 }
 

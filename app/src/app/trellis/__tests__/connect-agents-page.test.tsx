@@ -4,6 +4,7 @@ import {
   CLAUDE_CODE,
   CODEX,
   GROK,
+  OPENCODE,
 } from "@openchart/models/model-tiers";
 import type { ProviderDiscoveryResult } from "@openchart/models/model-provider";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -59,7 +60,19 @@ function mount(discovery: Record<string, ProviderDiscoveryResult>) {
 
 const ready = (id: string): ProviderDiscoveryResult => ({
   status: "ready",
-  provider: { id, name: id, models: [] },
+  provider: {
+    id,
+    name: id,
+    models: [
+      {
+        kind: "language",
+        id: "native",
+        name: "Native",
+        providerID: id,
+        capabilities: { input: {}, output: {} },
+      },
+    ],
+  },
 });
 
 test("signed-in agents connect on their own and Continue starts the tour", async () => {
@@ -68,9 +81,16 @@ test("signed-in agents connect on their own and Continue starts the tour", async
     [CODEX]: ready(CODEX),
     [ANTIGRAVITY]: ready(ANTIGRAVITY),
     [GROK]: ready(GROK),
+    [OPENCODE]: ready(OPENCODE),
   });
 
-  for (const name of ["Claude Code", "Codex", "Antigravity", "Grok"])
+  for (const name of [
+    "Claude Code",
+    "Codex",
+    "Antigravity",
+    "Grok",
+    "OpenCode",
+  ])
     expect(
       await within(screen.getByRole("region", { name })).findByText(
         "Connected",
@@ -92,6 +112,7 @@ test("a signed-out agent asks to sign in, other agents are not yet available, an
     [CODEX]: { status: "not_installed" },
     [ANTIGRAVITY]: { status: "not_installed" },
     [GROK]: { status: "not_installed" },
+    [OPENCODE]: { status: "not_installed" },
   });
   const claude = screen.getByRole("region", { name: "Claude Code" });
   const signingIn = {
@@ -113,7 +134,7 @@ test("a signed-out agent asks to sign in, other agents are not yet available, an
   expect(
     await within(claude).findByText(/Complete sign-in in your browser/),
   ).toBeInTheDocument();
-  for (const name of ["Codex", "Antigravity", "Grok"])
+  for (const name of ["Codex", "Antigravity", "Grok", "OpenCode"])
     expect(
       within(screen.getByRole("region", { name })).getByRole("button", {
         name: "Install",

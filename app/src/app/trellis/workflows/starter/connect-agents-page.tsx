@@ -4,6 +4,7 @@ import {
   CLAUDE_CODE,
   CODEX,
   GROK,
+  OPENCODE,
   type NativeProviderID,
 } from "@openchart/models/model-tiers";
 import { Check } from "lucide-react";
@@ -32,7 +33,6 @@ const soon: readonly { agent: AgentMarkId; name: string }[] = [
   { agent: "gemini", name: "Gemini" },
   { agent: "cursor", name: "Cursor" },
   { agent: "githubCopilot", name: "Copilot" },
-  { agent: "openCode", name: "OpenCode" },
   { agent: "kimi", name: "Kimi" },
   { agent: "deepSeek", name: "DeepSeek" },
 ];
@@ -46,10 +46,13 @@ function AgentColumn({
   providerID: NativeProviderID;
   controls: Controls;
 }) {
-  const { name, Logo } = NATIVE_PROVIDER_BRANDS[providerID];
+  const { name, Logo, setupHint } = NATIVE_PROVIDER_BRANDS[providerID];
   const { discovery, running } = controls;
   const connected =
-    !discovery.isError && discovery.data?.status === "ready" && !running;
+    !discovery.isError &&
+    discovery.data?.status === "ready" &&
+    discovery.data.provider.models.length > 0 &&
+    !running;
   return (
     <section
       aria-label={name}
@@ -57,6 +60,9 @@ function AgentColumn({
     >
       <Logo className="size-12" />
       <h3 className="font-medium">{name}</h3>
+      {setupHint && (
+        <p className="text-xs text-muted-foreground">{setupHint}</p>
+      )}
       <div className="w-full max-w-56">
         {/* Discovery connects a signed-in CLI on its own; only sign-in or install needs the user. */}
         {connected ? (
@@ -75,7 +81,7 @@ function AgentColumn({
 }
 
 /**
- * The starter workflow's first page: Claude Code, Codex, Antigravity and Grok connect
+ * The starter workflow's first page: Claude Code, Codex, Antigravity, Grok and OpenCode connect
  * on their own when already signed in, otherwise the user signs in here. Other
  * agents are listed as coming soon. Closing or skipping continues the tour.
  * @example <ConnectAgentsPage transport={transport} onDone={next} />
@@ -85,9 +91,12 @@ export function ConnectAgentsPage({ transport, onDone }: OnboardingPageProps) {
   const codex = useNativeProvider(CODEX, transport);
   const antigravity = useNativeProvider(ANTIGRAVITY, transport);
   const grok = useNativeProvider(GROK, transport);
+  const opencode = useNativeProvider(OPENCODE, transport);
   const moreAgents = useId();
-  const connected = [claude, codex, antigravity, grok].some(
-    ({ discovery }) => discovery.data?.status === "ready",
+  const connected = [claude, codex, antigravity, grok, opencode].some(
+    ({ discovery }) =>
+      discovery.data?.status === "ready" &&
+      discovery.data.provider.models.length > 0,
   );
   return (
     <Dialog open onOpenChange={(open) => !open && onDone()}>
@@ -104,11 +113,12 @@ export function ConnectAgentsPage({ transport, onDone }: OnboardingPageProps) {
             have.
           </DialogDescription>
         </div>
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
           <AgentColumn providerID={CLAUDE_CODE} controls={claude} />
           <AgentColumn providerID={CODEX} controls={codex} />
           <AgentColumn providerID={ANTIGRAVITY} controls={antigravity} />
           <AgentColumn providerID={GROK} controls={grok} />
+          <AgentColumn providerID={OPENCODE} controls={opencode} />
         </div>
         <section aria-labelledby={moreAgents} className="space-y-5">
           <h3

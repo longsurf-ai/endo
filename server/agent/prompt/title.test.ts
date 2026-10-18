@@ -374,3 +374,26 @@ test("times out stalled title inference without failing the prompt run", async (
     }),
   );
 });
+
+test("uses the selected native model for titles when it has no tier mapping", async () => {
+  await run((fixture) =>
+    Effect.gen(function* () {
+      const input = {
+        ...fixture.input,
+        model: {
+          ...model,
+          providerID: "opencode",
+          id: "private/native",
+          tier: undefined,
+        },
+      };
+      yield* SessionTitle.ensure(input);
+      expect(fixture.getModel).toHaveBeenCalledExactlyOnceWith(
+        "opencode",
+        "private/native",
+      );
+      expect(fixture.calls).toHaveLength(1);
+      expect(request(fixture).model.id).toBe("private/native");
+    }),
+  );
+});

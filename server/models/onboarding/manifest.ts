@@ -166,6 +166,16 @@ export const PROVIDER_MANIFEST: RuntimeManifest<NativeProviderID> = {
       executable: "antigravity",
     },
   },
+  opencode: {
+    "darwin-arm64": {
+      version: "2.0.32",
+      url: "https://registry.npmjs.org/@opencode/cli-darwin-arm64/-/cli-darwin-arm64-2.0.32.tgz",
+      integrity:
+        "sha512-wASwXBsWaOAYcZrh4ZLl4oaVxPCUAGVb7zZvXBBF8TjWE4uWgY0D2tj6gn80JfcO3b/s9woM6dP/gKqYKK2EdQ==",
+      layout: "npm",
+      executable: "bin/opencode",
+    },
+  },
   grok: {
     "darwin-arm64": {
       version: "1.0.62",

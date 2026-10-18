@@ -28,7 +28,7 @@ afterEach(() => {
   Reflect.deleteProperty(HTMLElement.prototype, "scrollIntoView");
 });
 
-test("menus offer only present tiers with native names, efforts, and saved tier fallback", async () => {
+test("menus offer present tiers and explicit models with efforts and saved tier fallback", async () => {
   const providers = [
     {
       id: CODEX,
@@ -92,6 +92,7 @@ test("menus offer only present tiers with native names, efforts, and saved tier 
     "gpt-5.6-solCodex",
     "gpt-5.6-terraCodex",
     "gpt-5.6-lunaCodex",
+    "future-modelCodex",
     "fable[1m]Claude Code",
   ]);
   expect(select).not.toHaveBeenCalled();

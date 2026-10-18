@@ -94,7 +94,7 @@ test.each([
   ["providerID", "codxe"],
   ["providerID", "openai-compatible"],
   ["modelID", "tier6"],
-  ["modelID", "gpt-6-astra"],
+  ["modelID", ""],
 ])(
   "rejects an invalid schedule model patch %s=%s without persisting it",
   async (field, value) => {
@@ -262,4 +262,22 @@ test("rejects managed fields and exhausted recurrence without writes or events",
     created,
   );
   expect(publish).not.toHaveBeenCalled();
+});
+
+test("preserves an explicit native model in a schedule target", async () => {
+  const created = await caller.resources.agent_schedule.create(input);
+  const updated = await caller.resources.agent_schedule.patch({
+    id: created.id,
+    expectedRevision: created.revision,
+    operations: [
+      {
+        op: "replace",
+        path: "/target/prompt/model/modelID",
+        value: "private/model/with/slashes",
+      },
+    ],
+  });
+  expect(updated.target.prompt.model.modelID).toBe(
+    "private/model/with/slashes",
+  );
 });

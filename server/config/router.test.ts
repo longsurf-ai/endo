@@ -4,6 +4,7 @@ import {
   CLAUDE_CODE,
   CODEX,
   GROK,
+  OPENCODE,
 } from "@openchart/models/model-tiers";
 
 import { createServer, type AppRouter } from "@openchart/server";
@@ -43,6 +44,7 @@ const nativeDisabled = {
       [CLAUDE_CODE]: { enabled: false },
       [ANTIGRAVITY]: { enabled: false },
       [GROK]: { enabled: false },
+      [OPENCODE]: { enabled: false },
     },
   },
 };

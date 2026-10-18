@@ -7,16 +7,22 @@ import {
 } from "@openchart/models/model-tiers";
 import * as Part from "./part";
 
-/** Supported provider and logical tier frozen into an accepted prompt. */
+/** Supported provider and tier alias or explicit native model frozen into an accepted prompt. */
 export const AgentPromptModel = Schema.Struct({
   providerID: Schema.Literals(MODEL_PROVIDER_IDS),
-  modelID: Schema.Literals(MODEL_TIER_IDS),
+  modelID: Schema.Union([
+    Schema.Literals(MODEL_TIER_IDS),
+    Schema.String.check(
+      Schema.isMinLength(1),
+      Schema.isPattern(/^(?!tier\d+$)/),
+    ),
+  ]),
   selectedVariant: Schema.optional(Schema.String.check(Schema.isMinLength(1))),
 })
   .mapFields(Struct.map(Schema.mutableKey))
   .annotate({ parseOptions: { onExcessProperty: "error" } });
 
-/** Product model selection; execution resolves its tier to a native SDK model. */
+/** Product model selection; execution resolves a tier or validates the exact native identity. */
 export type AgentPromptModel = typeof AgentPromptModel.Type;
 
 function toPromptPartInput<
@@ -129,7 +135,7 @@ function refineAgentPromptParts(input: {
  * |-- workspaceId?               Workspace selection; parent or Home default if omitted
  * |-- model                      Product model selection for this run
  * |   |-- providerID             Supported provider identity
- * |   |-- modelID                Logical tier1 through tier5
+ * |   |-- modelID                Tier1 through tier5 or an explicit native identity
  * |   `-- selectedVariant?       Variant when explicitly selected
  * `-- parts[]                    Ordered, non-empty input content / intent
  *     |-- text                   Prompt text

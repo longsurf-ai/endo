@@ -4,6 +4,7 @@ import {
   CLAUDE_CODE,
   CODEX,
   GROK,
+  OPENCODE,
   type NativeProviderID,
 } from "@openchart/models/model-tiers";
 import type { ComponentType } from "react";
@@ -20,11 +21,17 @@ export interface NativeProviderBrand {
   readonly name: string;
   readonly agent: string;
   readonly Logo: ComponentType<LogoProps>;
+  readonly setupHint?: string;
 }
 
 /** Grok wears xAI's mark in the surrounding text color. @example <GrokLogo className="size-4" /> */
 function GrokLogo(props: LogoProps) {
   return <AgentMark agent="xai" {...props} />;
+}
+
+/** OpenCode uses its native mark. @example <OpenCodeLogo className="size-4" /> */
+function OpenCodeLogo(props: LogoProps) {
+  return <AgentMark agent="openCode" {...props} />;
 }
 
 /**
@@ -44,6 +51,13 @@ export const NATIVE_PROVIDER_BRANDS: Readonly<
     Logo: AntigravityLogo,
   },
   [GROK]: { name: "Grok", agent: "Grok", Logo: GrokLogo },
+  [OPENCODE]: {
+    name: "OpenCode",
+    agent: "OpenCode",
+    Logo: OpenCodeLogo,
+    setupHint:
+      "Uses your OpenCode provider configuration. Configure models in OpenCode, then check again.",
+  },
 };
 
 /**

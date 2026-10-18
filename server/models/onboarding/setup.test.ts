@@ -9,6 +9,7 @@ import {
   CLAUDE_CODE,
   CODEX,
   GROK,
+  OPENCODE,
   MODEL_PROVIDER_IDS,
   type NativeProviderID,
 } from "@openchart/models/model-tiers";
@@ -32,6 +33,7 @@ async function fixture(
       [CLAUDE_CODE]: "/managed/claude",
       [ANTIGRAVITY]: "/managed/antigravity",
       [GROK]: "/managed/grok",
+      [OPENCODE]: "/managed/opencode",
     },
     installed: vi.fn(async (id: NativeProviderID) => installed.has(id)),
     install: vi.fn(async (id: NativeProviderID) => {

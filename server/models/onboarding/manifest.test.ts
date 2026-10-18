@@ -4,7 +4,12 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { expect, test } from "vitest";
 import { Schema } from "effect";
-import { ANTIGRAVITY, CLAUDE_CODE, GROK } from "@openchart/models/model-tiers";
+import {
+  ANTIGRAVITY,
+  CLAUDE_CODE,
+  GROK,
+  OPENCODE,
+} from "@openchart/models/model-tiers";
 import { PROVIDER_MANIFEST } from "./manifest";
 
 const Package = Schema.Struct({
@@ -13,6 +18,19 @@ const Package = Schema.Struct({
 const SDKPackage = Schema.Struct({
   version: Schema.String,
   claudeCodeVersion: Schema.String,
+});
+
+test("OpenCode pins the verified Apple Silicon native package", () => {
+  expect(Object.keys(PROVIDER_MANIFEST[OPENCODE])).toEqual(["darwin-arm64"]);
+  expect(PROVIDER_MANIFEST[OPENCODE]["darwin-arm64"]).toMatchObject({
+    version: "2.0.32",
+    url: "https://registry.npmjs.org/@opencode/cli-darwin-arm64/-/cli-darwin-arm64-2.0.32.tgz",
+    layout: "npm",
+    executable: "bin/opencode",
+  });
+  expect(PROVIDER_MANIFEST[OPENCODE]["darwin-arm64"]?.integrity).toMatch(
+    /^sha512-[A-Za-z0-9+/]{86}==$/,
+  );
 });
 
 test("Claude SDK, Desktop staging and every native artifact use one paired release", async () => {
