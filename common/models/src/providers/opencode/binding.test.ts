@@ -168,3 +168,64 @@ it("binds permissions and questions to each request, preserving choice values", 
     { signal },
   );
 });
+
+it.each([
+  { kind: "execute", input: { command: "" }, pattern: '{"command":""}' },
+  {
+    kind: "execute",
+    input: { command: "", code: "node --test" },
+    pattern: "node --test",
+  },
+  {
+    kind: "execute",
+    input: { patch: "a.diff" },
+    pattern: '{"patch":"a.diff"}',
+  },
+  { kind: "execute", input: {}, pattern: "*" },
+  { kind: "edit", input: { filePath: "" }, pattern: '{"filePath":""}' },
+  {
+    kind: "edit",
+    input: { filePath: "", file_path: "/workspace/a" },
+    pattern: "/workspace/a",
+  },
+  { kind: "edit", input: { path: "/workspace/a" }, pattern: "/workspace/a" },
+  { kind: "edit", input: { patch: "a.diff" }, pattern: '{"patch":"a.diff"}' },
+  { kind: "edit", input: {}, pattern: "*" },
+  {
+    kind: "fetch",
+    input: { url: "https://example.com" },
+    pattern: "https://example.com",
+  },
+])(
+  "scopes $kind approval for $input to $pattern",
+  async ({ kind, input, pattern }) => {
+    const { opencode } = await binding();
+    const askPermission = vi.fn(async () => {});
+    const options = opencode.requestOptions({
+      cwd: "/workspace",
+      tools: {},
+      permissionMode: "ask",
+      askPermission,
+    });
+    const request = {
+      kind,
+      name: kind === "execute" ? "shell" : kind === "edit" ? "write" : "fetch",
+      title: "Synthetic permission request",
+      input,
+    };
+    expect(await options.approve(request, new AbortController().signal)).toBe(
+      true,
+    );
+    expect(askPermission).toHaveBeenCalledExactlyOnceWith({
+      permission:
+        kind === "execute"
+          ? "run_command"
+          : kind === "fetch"
+            ? "web_fetch"
+            : "edit",
+      patterns: [pattern],
+      always: [pattern],
+      metadata: request,
+    });
+  },
+);

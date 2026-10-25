@@ -113,7 +113,9 @@ function approval(
     signal.throwIfAborted();
     const { input, kind, name } = request;
     const value = (key: string) =>
-      typeof input[key] === "string" ? (input[key] as string) : undefined;
+      typeof input[key] === "string" && input[key] !== ""
+        ? (input[key] as string)
+        : undefined;
     const command =
       kind === "execute" ||
       name === "execute" ||
@@ -127,18 +129,20 @@ function approval(
         : kind === "fetch"
           ? "web_fetch"
           : kind;
-    const pattern = command
-      ? (value("command") ?? value("code"))
-      : (value("filePath") ??
-        value("file_path") ??
-        value("path") ??
-        value("url"));
+    const pattern =
+      (command
+        ? (value("command") ?? value("code"))
+        : (value("filePath") ??
+          value("file_path") ??
+          value("path") ??
+          value("url"))) ??
+      (Object.keys(input).length > 0 ? JSON.stringify(input) : "*");
     try {
       await ask({
         permission,
-        patterns: [pattern ?? name],
+        patterns: [pattern],
         metadata: { ...request },
-        always: [pattern ?? name],
+        always: [pattern],
       });
       signal.throwIfAborted();
       return true;

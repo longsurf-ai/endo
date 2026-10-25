@@ -46,12 +46,12 @@ export function requestEnvironment(
   // Encode only generated agent strings. Existing inline substitution syntax
   // remains OpenCode-owned; instructions cannot trigger file/environment reads.
   const encodedAgent = JSON.stringify(nativeAgent).replace(
-    /\{(file|env):/g,
+    /\{(file|env):/gi,
     "\\u007b$1:",
   );
   const content = JSON.stringify(overlay).replace(
     `"${agent}":null`,
-    `"${agent}":${encodedAgent}`,
+    () => `"${agent}":${encodedAgent}`,
   );
   return { agent, env: { ...inherited, OPENCODE_CONFIG_CONTENT: content } };
 }
