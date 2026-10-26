@@ -15,7 +15,7 @@ endo/
   common/
     agent/                    composer Part constraints and directive syntax
     identifier/               branded ID schemas (defineId) and monotonic generation
-    models/                   Node-only native model providers (Codex, Claude Code, Antigravity, Grok)
+    models/                   Node-only native model providers (Codex, Claude Code, Antigravity, Grok, OpenCode)
     notification/             notification sound catalog shared by app, server and desktop
     utils/                    lowest-level helpers
   platform/desktop/           Electron main, preload, backend entry, packaging

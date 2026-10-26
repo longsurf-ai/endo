@@ -11,6 +11,8 @@ export const CLAUDE_CODE = "claude-code" as const;
 export const ANTIGRAVITY = "antigravity" as const;
 /** Grok CLI provider identity. */
 export const GROK = "grok" as const;
+/** OpenCode CLI provider identity. */
+export const OPENCODE = "opencode" as const;
 
 /** Providers accepted by product prompts and model selectors. */
 export const MODEL_PROVIDER_IDS = [
@@ -18,6 +20,7 @@ export const MODEL_PROVIDER_IDS = [
   CLAUDE_CODE,
   ANTIGRAVITY,
   GROK,
+  OPENCODE,
 ] as const;
 
 /** Supported native provider identity, independent of enablement and discovery. */
@@ -117,7 +120,8 @@ export function resolveModelTier(
 }
 
 /**
- * Projects supported providers into tier-only picker choices, including downward fallbacks.
+ * Projects supported providers into tier choices and explicit unclassified models.
+ * Tier choices include provider-local downward fallbacks; explicit choices never fall back.
  * Tier choices retain the resolved model's native name and metadata.
  * Execution resolves the ID again; menus can use the actual tier to hide absent tiers.
  * @example const choices = providers.flatMap(modelChoices);
@@ -133,11 +137,19 @@ export function modelChoices(provider: {
     {
       id: providerID,
       name: provider.name,
-      models: [...MODEL_TIER_IDS].reverse().flatMap((id) => {
-        const model = resolveModelTier(providerID, id, provider.models);
-        if (!model) return [];
-        return [{ ...model, providerID, id }];
-      }),
+      models: [
+        ...[...MODEL_TIER_IDS].reverse().flatMap((id) => {
+          const model = resolveModelTier(providerID, id, provider.models);
+          if (!model) return [];
+          return [{ ...model, providerID, id }];
+        }),
+        ...provider.models
+          .filter(
+            (model) =>
+              model.providerID === providerID && model.tier === undefined,
+          )
+          .map((model) => ({ ...model, providerID })),
+      ],
     },
   ];
 }

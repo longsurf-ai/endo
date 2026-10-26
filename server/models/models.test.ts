@@ -4,6 +4,7 @@ import {
   CLAUDE_CODE,
   CODEX,
   GROK,
+  OPENCODE,
   TIER1,
   TIER4,
   classifyModels,
@@ -663,6 +664,7 @@ test("model settings expose only native providers", () => {
     [CLAUDE_CODE]: { enabled: true },
     [ANTIGRAVITY]: { enabled: true },
     [GROK]: { enabled: true },
+    [OPENCODE]: { enabled: true },
   });
   expect(() =>
     decode({ providers: { "openai-compatible": { enabled: true } } }),

@@ -21,6 +21,7 @@ import {
   CODEX,
   CLAUDE_CODE,
   GROK,
+  OPENCODE,
 } from "@openchart/models/model-tiers";
 import { createInstallations, installationTask } from "./installation";
 import type { RuntimeArtifact } from "./manifest";
@@ -100,6 +101,7 @@ async function fixture(
         [CLAUDE_CODE]: { test: pin },
         [ANTIGRAVITY]: { test: pin },
         [GROK]: { test: pin },
+        [OPENCODE]: { test: pin },
       },
       "test",
     );

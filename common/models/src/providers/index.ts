@@ -4,6 +4,7 @@ import {
   CLAUDE_CODE,
   CODEX,
   GROK,
+  OPENCODE,
   type NativeProviderID,
 } from "@openchart/models/model-tiers";
 import type { NativeProvider } from "@openchart/models/native-provider";
@@ -11,6 +12,7 @@ import { antigravity } from "./antigravity/binding";
 import { claudeCode } from "./claude-code/binding";
 import { codex } from "./codex/binding";
 import { grok } from "./grok/binding";
+import { opencode } from "./opencode/binding";
 
 /** Every supported native provider by ID; hosts construct bindings from here. */
 export const NATIVE_PROVIDERS: Readonly<
@@ -20,6 +22,7 @@ export const NATIVE_PROVIDERS: Readonly<
   [CODEX]: codex,
   [ANTIGRAVITY]: antigravity,
   [GROK]: grok,
+  [OPENCODE]: opencode,
 };
 
 /**

@@ -117,7 +117,16 @@ export function ProviderSetupAction({
         </Button>
       );
     case "ready":
-      return null;
+      return discovery.data.provider.models.length === 0 ? (
+        <Button
+          size="sm"
+          variant="outline"
+          className={className}
+          onClick={() => void discovery.refetch()}
+        >
+          Check again
+        </Button>
+      ) : null;
   }
 }
 
@@ -136,7 +145,7 @@ export function NativeProvider({
   enabled: boolean;
 }) {
   const controls = useNativeProvider(providerID, transport);
-  const { name, Logo } = NATIVE_PROVIDER_BRANDS[providerID];
+  const { name, Logo, setupHint } = NATIVE_PROVIDER_BRANDS[providerID];
   const { discovery, quota, running } = controls;
   const ready = !discovery.isError && discovery.data?.status === "ready";
   return (
@@ -156,6 +165,7 @@ export function NativeProvider({
               ? discoveryDescription(discovery.data, enabled)
               : "Checking installation and account…"
         }
+        descriptionOutside={setupHint}
         actions={
           ready && !running ? (
             <div className="flex items-center gap-4">

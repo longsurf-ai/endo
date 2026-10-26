@@ -181,7 +181,7 @@ describe("logical model tiers", () => {
     expect(choices[0]?.providerID).toBe(CODEX);
   });
 
-  it("omits unsupported providers and unclassified native models from prompt choices", () => {
+  it("omits unsupported providers and preserves unclassified native choices", () => {
     expect(modelChoices({ id: "typo", name: "Unknown", models: [] })).toEqual(
       [],
     );
@@ -190,7 +190,7 @@ describe("logical model tiers", () => {
         id: CODEX,
         name: "Codex",
         models: [model("future-model", CODEX)],
-      })[0]?.models,
-    ).toEqual([]);
+      })[0]?.models.map(({ id }) => id),
+    ).toEqual(["future-model"]);
   });
 });

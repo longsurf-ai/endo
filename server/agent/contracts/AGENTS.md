@@ -19,8 +19,8 @@ Sibling Agent modules own persistence and execution.
   model context. Branch writers reject Dig In sources and copied Dig In markers.
 - Prompt input derives from Parts; Session/Message/Run/intent identities stay
   outside the immutable prompt value.
-- Prompt models require a supported provider and tier1 through tier5; native SDK
-  identities belong to resolved execution metadata.
+- Prompt models require a supported provider and a nonempty tier alias or native
+  identity. Execution validates availability; only tier aliases may fall back.
 - Use native Schema.Json/JsonObject and codecs; each schema owns mutability,
   unknown-key policy, and JSON encoding. Derive types instead of parallel shapes.
 - SQL payload projections belong in server Session storage and derive from these

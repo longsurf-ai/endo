@@ -49,7 +49,7 @@ export const ensure = Effect.fn("SessionTitle.ensure")(
     const models = yield* Models.Service;
     const selection = agent.model ?? {
       providerID: input.model.providerID,
-      modelID: TIER1,
+      modelID: input.model.tier === undefined ? input.model.id : TIER1,
     };
     const model = yield* models.getModel(
       selection.providerID,

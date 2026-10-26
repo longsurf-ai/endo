@@ -48,7 +48,7 @@ do not retain continuation hints under an incomplete user prefix. Claude's text
 replay preserves complete tool arguments and results; context reduction belongs
 to the application, not a silent per-value adapter truncation.
 
-`providers/<id>/adapter/` (`claude-code`, `codex`, `antigravity`, `grok`) each own their
+`providers/<id>/adapter/` (`claude-code`, `codex`, `antigravity`, `grok`, `opencode`) each own their
 native protocol, request execution, tool transport, and stream translation. No
 adapter imports another; each imports only the shared protocol schema
 (`provider-protocol.ts`), `providers/continuation.ts`, `providers/generate.ts`, and
@@ -239,30 +239,27 @@ because Endo runs those agents itself. Plugins installed for Claude Code under
 ## Model references and shared constants
 
 [`model-tiers.ts`](../../common/models/src/model-tiers.ts) owns OpenChart's
-`CODEX`, `CLAUDE_CODE`, `ANTIGRAVITY`, `GROK`, `TIER1` through `TIER5`, and tier classification;
+`CODEX`, `CLAUDE_CODE`, `ANTIGRAVITY`, `GROK`, `OPENCODE`, `TIER1` through `TIER5`, and tier classification;
 each provider's native mapping lives in `providers/<id>/tiers.ts`.
 OpenChart bindings and consumers import these constants;
 independent provider adapters keep their native identity strings locally.
 Each provider maps a tier to one flat, ordered array of native aliases/versions.
 Discovery establishes availability; this table never manufactures available models.
 
-Product prompts, schedules, defaults, and profile selections accept only
-`codex`, `claude-code`, `antigravity` or `grok` plus `tier1` through `tier5`. `AgentPromptModel` derives
-these literal fields from the shared `MODEL_PROVIDER_IDS` and `MODEL_TIER_IDS`.
-Unknown providers and native model IDs fail boundary parsing before admission.
-The provider registry uses the same native provider list by default.
+Product prompts, schedules, defaults, and profile selections accept supported
+provider identities plus a tier alias or explicit native model identity.
+`AgentPromptModel` derives providers from `MODEL_PROVIDER_IDS`, preserves
+`MODEL_TIER_IDS`, and permits nonempty native IDs. Unknown providers, empty IDs,
+and reserved invalid tier numbers fail boundary parsing. Model availability is
+validated by the registry before inference; schedule authoring performs no
+native discovery.
 
-The `models.list` endpoint exposes only supported provider/tier choices. Each
-choice retains the resolved model's native name and metadata, with its logical
-tier as the selection ID. Frontend menus show tiers actually present in discovery;
-saved higher-tier selections may display a provider-local downward fallback.
-Unavailable selections stay unresolved. No separate display name is persisted.
-
-Provider-level `getModel` still accepts exact native IDs for resolved execution
-and internal SDK use. Native discovery metadata and historical execution facts
-retain actual SDK identities. Tightening product inputs does not rewrite history
-or convert existing explicit selections; unsupported authored inputs must be
-reselected using a supported provider and tier.
+The `models.list` endpoint projects tier choices with their resolved metadata and
+appends unclassified native models as explicit choices. Frontend menus show tiers
+actually present in discovery and those direct choices. Saved higher-tier
+selections retain provider-local downward fallback; explicit selections never
+fall back. Unavailable selections stay unresolved. No separate display name is
+persisted, and historical execution facts retain actual SDK identities.
 
 ## Configuration
 
@@ -278,14 +275,15 @@ Schema, shared by the public Config API and the native ConfigProvider recipe:
       "codex": { "enabled": true },
       "claude-code": { "enabled": true },
       "antigravity": { "enabled": true },
-      "grok": { "enabled": true }
+      "grok": { "enabled": true },
+      "opencode": { "enabled": true }
     },
     "defaultModel": { "providerID": "codex", "modelID": "tier1" }
   }
 }
 ```
 
-Codex, Claude Code, Antigravity and Grok are the registered model providers and default
+Codex, Claude Code, Antigravity, Grok and OpenCode are the registered model providers and default
 to enabled. Settings inspects each even when disabled. Enablement controls model selection and
 inference, not inspection. CLI accounts and credentials remain owned by the native
 provider; there is no model API endpoint or API-key configuration.
@@ -768,3 +766,19 @@ inputs to `ProviderQuestionRequest` and translate `answered` / `skipped` replies
 
 Codex, Claude and Grok share the LLM callback scope and cancellation bridge. Title/compaction calls
 without a question capability decline rather than opening an unowned UI wait.
+
+## OpenCode
+
+OpenCode V2 uses a managed ACP subprocess per request. Native discovery reads
+policy-filtered model and effort choices without inference. Provider-wide menus
+use home-directory configuration; each request validates its explicit selection
+again in its own workspace. Unclassified models remain direct choices alongside
+existing tier aliases. No OpenCode-specific quality tiers are inferred.
+
+The adapter injects a uniquely named authenticated loopback MCP server and a
+request-only native agent. It preserves provider policies, escapes instruction
+substitutions, and pins request and auxiliary model defaults to the selected
+native identity. Native child events own delegate content; host MCP metadata
+routes exact application outcomes. Native codemode proxy output never replaces
+the original host result. Structured output is a validated MCP submission rather
+than a native response-format guarantee. See [usage](../operations/opencode.md).

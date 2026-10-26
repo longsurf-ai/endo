@@ -53,13 +53,23 @@ describe("AgentPromptInput", () => {
     },
   );
 
+  it("accepts an explicit native model without rewriting its identity", () => {
+    const selection = {
+      providerID: CODEX,
+      modelID: "private/model/with/slashes",
+      selectedVariant: "high",
+    };
+    expect(Schema.decodeUnknownSync(AgentPromptModel)(selection)).toEqual(
+      selection,
+    );
+  });
+
   it.each([
     { providerID: "unknown", modelID: "tier1" },
     { providerID: "codxe", modelID: "tier1" },
     { providerID: "openai-compatible", modelID: "tier1" },
     { providerID: CODEX, modelID: "tier0" },
     { providerID: CODEX, modelID: "tier6" },
-    { providerID: CODEX, modelID: "gpt-6-astra" },
     { providerID: CODEX, modelID: "" },
   ])("rejects invalid model selection $providerID/$modelID", (model) => {
     expect(() =>
@@ -71,13 +81,11 @@ describe("AgentPromptInput", () => {
     ).toThrow();
   });
 
-  it("derives closed provider and tier types from the prompt schema", () => {
+  it("derives closed providers and native model strings from the prompt schema", () => {
     expectTypeOf<AgentPromptModel["providerID"]>().toEqualTypeOf<
-      "codex" | "claude-code" | "antigravity" | "grok"
+      "codex" | "claude-code" | "antigravity" | "grok" | "opencode"
     >();
-    expectTypeOf<AgentPromptModel["modelID"]>().toEqualTypeOf<
-      "tier1" | "tier2" | "tier3" | "tier4" | "tier5"
-    >();
+    expectTypeOf<AgentPromptModel["modelID"]>().toEqualTypeOf<string>();
   });
 
   it("keeps caller-supplied Part IDs optional in the derived TypeScript type", () => {

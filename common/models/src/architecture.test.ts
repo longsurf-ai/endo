@@ -4,6 +4,7 @@ import {
   CLAUDE_CODE,
   CODEX,
   GROK,
+  OPENCODE,
 } from "@openchart/models/model-tiers";
 
 import { describe, expect, it } from "vitest";
@@ -62,7 +63,7 @@ const SHARED_DEPENDENCIES: readonly string[] = [
 ];
 
 describe("models architecture", () => {
-  it.each([CLAUDE_CODE, CODEX, ANTIGRAVITY, GROK])(
+  it.each([CLAUDE_CODE, CODEX, ANTIGRAVITY, GROK, OPENCODE])(
     "%s adapter owns its implementation without sibling or model-package dependencies",
     async (adapter) => {
       const directory = path.join(providersDirectory, adapter, "adapter");
@@ -105,7 +106,7 @@ describe("models architecture", () => {
     for (const filename of await productionSources(sourceDirectory, false)) {
       if (path.basename(filename) === "model-tiers.ts") continue;
       if (
-        /\b(?:CLAUDE_CODE|CODEX|ANTIGRAVITY|GROK)\b/.test(
+        /\b(?:CLAUDE_CODE|CODEX|ANTIGRAVITY|GROK|OPENCODE)\b/.test(
           await fs.readFile(filename, "utf8"),
         )
       )
